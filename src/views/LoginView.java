@@ -2,27 +2,55 @@ package views;
 
 import controller.UserController;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class LoginView {
-    public static void display(Stage stage) {
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
-        grid.setVgap(8);
+    private VBox root;
+    private GridPane grid;
+    private Label emailLabel, passwordLabel;
+    private TextField emailInput;
+    private PasswordField passwordInput;
+    private Button loginButton;
+    private Hyperlink registerLink;
+    private Scene scene;
+
+    public void init() {
+        root = new VBox();
+        grid = new GridPane();
+        emailLabel = new Label("Email:");
+        passwordLabel = new Label("Password:");
+        emailInput = new TextField();
+        passwordInput = new PasswordField();
+        loginButton = new Button("Login");
+        registerLink = new Hyperlink("Don't have an account? Register here.");
+    }
+
+    public void layout() {
+        grid.add(emailLabel, 0, 0);
+        grid.add(emailInput, 1, 0);
+        grid.add(passwordLabel, 0, 1);
+        grid.add(passwordInput, 1, 1);
+        grid.add(loginButton, 1, 2);
+        grid.add(registerLink, 1, 3);
+
+        root.getChildren().add(grid);
+    }
+
+    public void style() {
+        root.setPadding(new Insets(20));
+        root.setSpacing(20);
+        root.setAlignment(Pos.CENTER);
         grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setAlignment(Pos.CENTER);
+    }
 
-        Label emailLabel = new Label("Email:");
-        TextField emailInput = new TextField();
-        Label passwordLabel = new Label("Password:");
-        PasswordField passwordInput = new PasswordField();
-
-        Button loginButton = new Button("Login");
-//        Button registerButton = new Button("Register");
-        Hyperlink registerLink = new Hyperlink("Don't have an account? Register here.");
-
+    public void setEventHandlers(Stage stage) {
         loginButton.setOnAction(e -> {
             String email = emailInput.getText();
             String password = passwordInput.getText();
@@ -36,23 +64,18 @@ public class LoginView {
             }
         });
 
-//        registerButton.setOnAction(e -> {
-//            RegisterView.display(stage); 
-//        });
-        registerLink.setOnAction(e -> {
-            RegisterView.display(stage);
-        });
+        registerLink.setOnAction(e -> RegisterView.display(stage));
+    }
 
-        grid.add(emailLabel, 0, 0);
-        grid.add(emailInput, 1, 0);
-        grid.add(passwordLabel, 0, 1);
-        grid.add(passwordInput, 1, 1);
-        grid.add(loginButton, 1, 2);
-//        grid.add(registerButton, 1, 3); 
-        grid.add(registerLink, 1, 3);
+    public static void display(Stage stage) {
+        LoginView loginView = new LoginView();
+        loginView.init();
+        loginView.layout();
+        loginView.style();
+        loginView.setEventHandlers(stage);
 
-        Scene scene = new Scene(grid, 300, 200);
-        stage.setScene(scene);
+        loginView.scene = new Scene(loginView.root, 300, 200);
+        stage.setScene(loginView.scene);
         stage.setTitle("Login");
         stage.show();
     }
