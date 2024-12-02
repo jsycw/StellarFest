@@ -1,6 +1,6 @@
 package views;
 
-import controller.UserController;
+import controllers.UserController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,29 +12,36 @@ import javafx.stage.Stage;
 public class RegisterView {
     private VBox root;
     private GridPane grid;
-    private Label emailLabel, usernameLabel, passwordLabel, roleLabel;
+    private Label titleLabel, emailLabel, usernameLabel, passwordLabel, roleLabel;
     private TextField emailInput, usernameInput;
     private PasswordField passwordInput;
-    private ComboBox<String> roleComboBox;
+    private ComboBox<String> roleSelect;
     private Button registerButton;
-    private Button backButton;
+    private Hyperlink loginLink;
     private Scene scene;
 
     public void init() {
         root = new VBox();
         grid = new GridPane();
+        titleLabel = new Label("Register for StellarFest");
         emailLabel = new Label("Email:");
         usernameLabel = new Label("Username:");
         passwordLabel = new Label("Password:");
         roleLabel = new Label("Role:");
+        
         emailInput = new TextField();
+        emailInput.setPromptText("Enter your email");
         usernameInput = new TextField();
+        usernameInput.setPromptText("Enter your username");
         passwordInput = new PasswordField();
-        roleComboBox = new ComboBox<>();
-        registerButton = new Button("Register");
-        backButton = new Button("Back to Login");
+        passwordInput.setPromptText("Enter your password");
 
-        roleComboBox.getItems().addAll("Event Organizer", "Vendor", "Guest");
+        roleSelect = new ComboBox<>();
+        roleSelect.getItems().addAll("Event Organizer", "Vendor", "Guest");
+        roleSelect.setPromptText("Select Role");
+
+        registerButton = new Button("Register");
+        loginLink = new Hyperlink("Already have an account? Login here.");
     }
 
     public void layout() {
@@ -45,20 +52,23 @@ public class RegisterView {
         grid.add(passwordLabel, 0, 2);
         grid.add(passwordInput, 1, 2);
         grid.add(roleLabel, 0, 3);
-        grid.add(roleComboBox, 1, 3);
+        grid.add(roleSelect, 1, 3);
         grid.add(registerButton, 1, 4);
-        grid.add(backButton, 1, 5);
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
 
-        root.getChildren().add(grid);
+        root.getChildren().addAll(titleLabel, grid, loginLink);
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        VBox.setMargin(titleLabel, new Insets(0, 0, 20, 0));
     }
 
     public void style() {
         root.setPadding(new Insets(20));
         root.setSpacing(20);
         root.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setAlignment(Pos.CENTER);
+        registerButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
+        loginLink.setStyle("-fx-text-fill: #4CAF50;");
     }
 
     public void setEventHandlers(Stage stage) {
@@ -66,25 +76,23 @@ public class RegisterView {
             String email = emailInput.getText();
             String username = usernameInput.getText();
             String password = passwordInput.getText();
-            String role = roleComboBox.getValue();
+            String role = roleSelect.getValue();
 
             if (email.isEmpty() || username.isEmpty() || password.isEmpty() || role == null) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Please fill in all fields.", ButtonType.OK);
                 alert.showAndWait();
             } else {
-                boolean success = UserController.register(email, username, password, role);
-                if (success) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Registration Successful!", ButtonType.OK);
-                    alert.showAndWait();
+                String message = new UserController().register(email, username, password, role);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+                alert.showAndWait();
+
+                if (message.equals("Registration successful. Please log in.")) {
                     LoginView.display(stage);
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Registration Failed. Try again.", ButtonType.OK);
-                    alert.showAndWait();
                 }
             }
         });
 
-        backButton.setOnAction(e -> LoginView.display(stage));
+        loginLink.setOnAction(e -> LoginView.display(stage));
     }
 
     public static void display(Stage stage) {
@@ -94,7 +102,7 @@ public class RegisterView {
         registerView.style();
         registerView.setEventHandlers(stage);
 
-        registerView.scene = new Scene(registerView.root, 300, 300);
+        registerView.scene = new Scene(registerView.root, 400, 400);
         stage.setScene(registerView.scene);
         stage.setTitle("Register");
         stage.show();

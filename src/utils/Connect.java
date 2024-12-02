@@ -1,58 +1,70 @@
 package utils;
 
-import java.sql.*;
+import java.sql.*; 
 
 public class Connect {
-	private final String USERNAME = "root";
-	private final String PASSWORD = "";
-	private final String DATABASE = "stellarfest";
-	private final String HOST = "localhost";
 	
-	private final String CONNECTION = String.format("jdbc:mysql://%s/%s", HOST, DATABASE);
+	private final String USERNAME = "root"; 
+	private final String PASSWORD = ""; 
+	private final String DATABASE = "stellarfest"; 
+	private final String HOST = "localhost: 3306"; 
+	private final String CONNECTION = String.format("jdbc:mysql://%s/%s", HOST, DATABASE); 
 	
-	public ResultSet rs;
-	public ResultSetMetaData rsm;
-	
-	private Connection con;
-	private Statement st;
+	public ResultSet rs; 
+	public ResultSetMetaData rsm; 
+	private Connection con; 
+	private Statement st; 
 	
 	private Connect() {
+
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection(CONNECTION, USERNAME, PASSWORD);
-			st = con.createStatement();
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(CONNECTION, USERNAME, PASSWORD); 
+			st = con.createStatement(); 
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		} 
 	}
 	
-	private static Connect connect = null;
-	
+	private static Connect connect = null; 
 	public static Connect getInstance() {
-		if(connect == null) connect = new Connect();
-		return connect;
+		if (connect == null) {
+			connect = new Connect(); 
+		}
+		return connect; 
 	}
 	
-	// SELECT
+//	5. SELECT DATA -> disimpen di variable rs 
 	public ResultSet execQuery(String Query) {
 		try {
 			rs = st.executeQuery(Query);
-			rsm = rs.getMetaData();
+			rsm = rs.getMetaData(); 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		return rs;
+		} 
+		return rs; 
 	}
 	
-	// INSERT 
 	public void execUpdate(String Query) {
 		try {
 			st.executeUpdate(Query);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 	}
+	
+	public PreparedStatement preparedStatement(String query) {
+		PreparedStatement ps = null; 
+		
+		try {
+			ps = con.prepareStatement(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		
+		return ps; 
+	}
+	
+	
+	
 }

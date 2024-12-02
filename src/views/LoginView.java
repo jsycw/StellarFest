@@ -1,6 +1,6 @@
 package views;
 
-import controller.UserController;
+import controllers.UserController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 public class LoginView {
     private VBox root;
     private GridPane grid;
-    private Label emailLabel, passwordLabel;
+    private Label titleLabel, emailLabel, passwordLabel;
     private TextField emailInput;
     private PasswordField passwordInput;
     private Button loginButton;
@@ -22,10 +22,13 @@ public class LoginView {
     public void init() {
         root = new VBox();
         grid = new GridPane();
+        titleLabel = new Label("Login to StellarFest");
         emailLabel = new Label("Email:");
         passwordLabel = new Label("Password:");
         emailInput = new TextField();
+        emailInput.setPromptText("Enter your email");
         passwordInput = new PasswordField();
+        passwordInput.setPromptText("Enter your password");
         loginButton = new Button("Login");
         registerLink = new Hyperlink("Don't have an account? Register here.");
     }
@@ -36,18 +39,21 @@ public class LoginView {
         grid.add(passwordLabel, 0, 1);
         grid.add(passwordInput, 1, 1);
         grid.add(loginButton, 1, 2);
-        grid.add(registerLink, 1, 3);
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
 
-        root.getChildren().add(grid);
+        root.getChildren().addAll(titleLabel, grid, registerLink);
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        VBox.setMargin(titleLabel, new Insets(0, 0, 20, 0));
     }
 
     public void style() {
         root.setPadding(new Insets(20));
         root.setSpacing(20);
         root.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setAlignment(Pos.CENTER);
+        loginButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
+        registerLink.setStyle("-fx-text-fill: #4CAF50;");
     }
 
     public void setEventHandlers(Stage stage) {
@@ -55,12 +61,38 @@ public class LoginView {
             String email = emailInput.getText();
             String password = passwordInput.getText();
 
-            if (UserController.login(email, password)) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Login Successful!", ButtonType.OK);
+            if (email.isEmpty() || password.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Please fill in all fields.", ButtonType.OK);
                 alert.showAndWait();
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid credentials.", ButtonType.OK);
-                alert.showAndWait();
+                String role = new UserController().login(email, password);
+                Alert alert;
+                if (role != null && !role.isEmpty()) {
+                    alert = new Alert(Alert.AlertType.INFORMATION, "Login successful!", ButtonType.OK);
+                    alert.showAndWait();
+
+                    switch (role) {
+                        case "admin":
+                            AdminHomeView.display(stage);
+                            break;
+                        case "event organizer":
+                            EventOrganizerHomeView.display(stage);
+                            break;
+                        case "vendor":
+                            VendorHomeView.display(stage);
+                            break;
+                        case "guest":
+                            GuestHomeView.display(stage);
+                            break;
+                        default:
+                            alert = new Alert(Alert.AlertType.ERROR, "Invalid role detected.", ButtonType.OK);
+                            alert.showAndWait();
+                            break;
+                    }
+                } else {
+                    alert = new Alert(Alert.AlertType.ERROR, "Invalid email or password.", ButtonType.OK);
+                    alert.showAndWait();
+                }
             }
         });
 
@@ -74,7 +106,7 @@ public class LoginView {
         loginView.style();
         loginView.setEventHandlers(stage);
 
-        loginView.scene = new Scene(loginView.root, 300, 200);
+        loginView.scene = new Scene(loginView.root, 400, 300);
         stage.setScene(loginView.scene);
         stage.setTitle("Login");
         stage.show();
