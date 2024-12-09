@@ -5,16 +5,26 @@ import java.sql.*;
 import java.util.Optional;
 
 public class User {
+	private String userId;
     private String email;
     private String username;
     private String password;
     private String role;
 
-    public User(String email, String username, String password, String role) {
+    public User(String userId, String email, String username, String password, String role) {
+    	this.userId = userId;
         this.email = email;
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+    
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getEmail() {
@@ -96,6 +106,7 @@ public class User {
 
         if (rs.next()) {
             User user = new User(
+                rs.getString("user_id"), // Include user_id
                 rs.getString("user_email"),
                 rs.getString("user_name"),
                 rs.getString("user_password"),
@@ -105,5 +116,6 @@ public class User {
         }
         return Optional.empty();
     }
+
 
 }

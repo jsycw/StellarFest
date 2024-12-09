@@ -1,7 +1,5 @@
 package views;
 
-import java.sql.SQLException;
-
 import controllers.UserController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -83,19 +81,20 @@ public class LoginView {
                             break;
                         case "vendor":
                         	Vendor vendor = null;
-                        	try {
-                        		vendor = new Vendor("user_id", "email", "name", "role");
-                        		vendor = vendor.getVendorFromDatabase(email);
-                        		if (vendor != null) {
-                                    VendorHomeView.display(stage, vendor);
-                                } else {
-                                    alert = new Alert(Alert.AlertType.ERROR, "Vendor not found.", ButtonType.OK);
-                                    alert.showAndWait();
-                                }
-                        	} catch (SQLException e1) {
-                        		// TODO Auto-generated catch block
-                        		e1.printStackTrace();
-                        	}
+//                        	try {
+//                        		vendor = new Vendor("user_id", "email", "name", "role");
+//                        		vendor = vendor.getVendorFromDatabase(email);
+//                        		if (vendor != null) {
+//                                    VendorHomeView.display(stage, vendor);
+//                                } else {
+//                                    alert = new Alert(Alert.AlertType.ERROR, "Vendor not found.", ButtonType.OK);
+//                                    alert.showAndWait();
+//                                }
+//                        	} catch (SQLException e1) {
+//                        		// TODO Auto-generated catch block
+//                        		e1.printStackTrace();
+//                        	}
+                        	
                             break;
                         case "guest":
                             GuestHomeView.display(stage);
