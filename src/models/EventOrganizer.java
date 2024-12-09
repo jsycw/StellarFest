@@ -19,28 +19,6 @@ public class EventOrganizer extends User {
 		return Event.createEvent(eventName, eventDate, eventLocation, eventDescription, organizerId);
 	} 
 
-//    public static Response<Void> createEvent(String eventName, String eventDate, String eventLocation, String eventDescription, String organizerId) {
-//        String query = "INSERT INTO events (event_id, event_name, event_date, event_location, event_description, organizer_id) VALUES (?,?,?,?,?,?)";
-//        try (PreparedStatement ps = db.preparedStatement(query)) {
-//            String eventId = "EV" + System.currentTimeMillis();
-//            ps.setString(1, eventId);
-//            ps.setString(2, eventName);
-//            ps.setString(3, eventDate);
-//            ps.setString(4, eventLocation);
-//            ps.setString(5, eventDescription);
-//            ps.setString(6, organizerId);
-//
-//            int result = ps.executeUpdate();
-//            if (result > 0) {
-//                return Response.success("Event created successfully", null);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return Response.error("Error creating event: " + e.getMessage());
-//        }
-//        return Response.error("Event creation failed");
-//    }
-
     public static Response<List<Event>> viewOrganizedEvents(String userId) {
         String query = "SELECT * FROM events WHERE organizer_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {
@@ -153,7 +131,7 @@ public class EventOrganizer extends User {
         if (eventLocation.length() < 5) {
             return Response.error("Event location must be at least 5 characters");
         }
-        if (eventDescription.length() < 10) {
+        if (eventDescription.length() < 10) { //biar bs ngetes gakebanyakan jd 10 dl
             return Response.error("Event description must be at least 200 characters");
         }
         if (eventDate.isBefore(LocalDate.now()) || eventDate.isEqual(LocalDate.now())) {

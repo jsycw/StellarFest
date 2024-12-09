@@ -1,14 +1,16 @@
 package models;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import utils.Response;
+import utils.Connect;
 
 public class Guest extends User {
-    
+
     public Guest(String userId, String userEmail, String username, String userPassword) {
         super(userId, userEmail, username, userPassword, "Guest");
     }
@@ -18,22 +20,21 @@ public class Guest extends User {
     }
 
     public static Response<List<Event>> viewAcceptedEvents(String email) {
-        // SQL Query to get accepted events
-        String query = String.format(
+        String query = 
             "SELECT e.event_id, e.event_name, e.event_date, e.event_location, e.event_description, e.organizer_id " +
             "FROM events e " +
             "JOIN invitations i ON e.event_id = i.event_id " +
             "JOIN users u ON u.user_id = i.user_id " +
-            "WHERE u.user_email = '%s' AND i.invitation_role = 'Guest' AND i.invitation_status = 1", email);
+            "WHERE u.user_email = ? AND i.invitation_role = 'Guest' AND i.invitation_status = 1";
 
-        ResultSet rs = db.execQuery(query);
-        ArrayList<Event> events = new ArrayList<>();
+        Connect db = Connect.getInstance();
         
-        if (rs == null) {
-            return Response.error("Error fetching accepted events data");
-        }
-        
-        try {
+        try (PreparedStatement stmt = db.preparedStatement(query)) {
+            stmt.setString(1, email);  
+
+            ResultSet rs = stmt.executeQuery();
+            ArrayList<Event> events = new ArrayList<>();
+            
             while (rs.next()) {
                 String eventId = rs.getString("event_id");
                 String eventName = rs.getString("event_name");
@@ -44,11 +45,15 @@ public class Guest extends User {
                 
                 events.add(new Event(eventId, eventName, eventDate, eventLocation, eventDescription, organizerId));
             }
+            
+            if (events.isEmpty()) {
+                return Response.error("No accepted events found for the given email.");
+            }
+            
+            return Response.success("Fetch accepted events success", events);
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.error("Error fetching accepted events: " + e.getMessage());
         }
-        
-        return Response.success("Fetch accepted events success", events);
     }
 }
