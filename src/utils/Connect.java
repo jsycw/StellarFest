@@ -45,13 +45,16 @@ public class Connect {
 		return rs; 
 	}
 	
-	public void execUpdate(String Query) {
-		try {
-			st.executeUpdate(Query);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
+	public int execUpdate(String query) {
+	    int rowsAffected = 0;
+	    try {
+	        rowsAffected = st.executeUpdate(query);  // Execute the update and get the number of affected rows
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return rowsAffected;  // Return the number of rows affected
 	}
+
 	
 	public PreparedStatement preparedStatement(String query) {
 		PreparedStatement ps = null; 

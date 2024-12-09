@@ -2,10 +2,10 @@ package utils;
 
 import models.User;
 
-public class AuthUser {
+public class Auth {
 	private static User user;
 	
-	private AuthUser() {};
+	private Auth() {};
 	
 	public static User get() {
 		return user;

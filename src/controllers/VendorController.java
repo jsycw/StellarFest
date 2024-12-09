@@ -1,62 +1,56 @@
 package controllers;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.control.Alert;
-import models.Product;
+import models.Event;
 import models.Vendor;
-import utils.Connect;
+import models.VendorProduct;
+import utils.Auth;
+import utils.Response;
 
 public class VendorController {
-	private Vendor vendor;
-	private Connect db;
-	
-	public VendorController(Vendor vendor) {
-		this.vendor = vendor;
-	    this.db = Connect.getInstance();
-	}
-	
-	public void manageProduct(String productName, String productDescription) {
-		if (productName.isEmpty() || productDescription.isEmpty() || productDescription.length() > 200) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Invalid product details!");
-            alert.show();
-            return;
+    public Response<Void> acceptEventInvitation(String eventId) {
+        Vendor loggedInVendor = (Vendor) Auth.get();
+
+        if (loggedInVendor == null || !loggedInVendor.getRole().equals("Vendor")) {
+            return Response.error("Error accepting invitation: user is not a vendor.");
         }
 
-        String query = "INSERT INTO products (product_name, product_description) VALUES (?, ?)";
-        try {
-            var ps = db.preparedStatement(query);
-            ps.setString(1, productName);
-            ps.setString(2, productDescription);
-            ps.executeUpdate();
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("Product added successfully!");
-            alert.show();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-	}
-	
-	public List<Product> viewAllProducts() {
-        List<Product> products = new ArrayList<>();
-        String query = "SELECT * FROM products";
-        try {
-            var ps = db.preparedStatement(query);
-            var rs = ps.executeQuery();
-
-            while (rs.next()) {
-                String productName = rs.getString("product_name");
-                String productDescription = rs.getString("product_description");
-                products.add(new Product(productName, productDescription));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return products;
+        return loggedInVendor.acceptEventInvitation(eventId);
     }
-	
+
+    public static Response<List<Event>> getAcceptedEvents(String email) {
+        return Vendor.fetchAcceptedEvents(email);
+    }
+
+    public Response<Void> updateVendorProduct(String productDescription, String productName) {
+        Vendor loggedInVendor = (Vendor) Auth.get();
+
+        if (loggedInVendor == null || !loggedInVendor.getRole().equals("Vendor")) {
+            return Response.error("Error managing vendor product: user is not a vendor.");
+        }
+        Response<Void> validationResponse = validateProductInput(productDescription, productName);
+        if (!validationResponse.isSuccess()) {
+            return validationResponse;
+        }
+
+        return loggedInVendor.manageVendorProduct(productDescription, productName);
+    }
+
+    public static Response<VendorProduct> retrieveVendorProductDetails(String vendorId) {
+        return Vendor.getVendorProductDetails(vendorId);
+    }
+
+    public static Response<Void> validateProductInput(String description, String productName) {
+        if (description == null || description.isEmpty()) {
+            return Response.error("Product description must be filled.");
+        }
+        if (productName == null || productName.isEmpty()) {
+            return Response.error("Product name must be filled.");
+        }
+        if (description.length() > 200) {
+            return Response.error("Product description must be 200 characters or less.");
+        }
+        return Response.success("Product input validation passed.", null);
+    }
 }

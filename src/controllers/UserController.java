@@ -1,54 +1,92 @@
 package controllers;
 
 import models.User;
-
-import java.sql.SQLException;
-import java.util.Optional;
+import utils.Auth;
+import utils.Response;
 
 public class UserController {
+    public static Response<Void> register(String email, String name, String password, String role) {
+        Response<Void> validationResponse = User.checkRegisterInput(email, name, password);
+        if (!validationResponse.isSuccess()) {
+            return validationResponse;
+        }
 
-	public String register(String email, String username, String password, String role) {
-	    if (email == null || email.isEmpty()) return "Email cannot be empty.";
-	    if (username == null || username.isEmpty()) return "Username cannot be empty.";
-	    if (password == null || password.isEmpty()) return "Password cannot be empty.";
-	    if (role == null || role.isEmpty()) return "Role must be selected.";
+        if (getUserByEmail(email).getData() != null) {
+            return Response.error("Email is already in use.");
+        }
 
-	    try {
-	        if (User.isEmailOrUsernameTaken(email, username)) {
-	            return "Email or Username is already in use.";
-	        }
+        if (getUserByUsername(name).getData() != null) {
+            return Response.error("Username is already taken.");
+        }
 
-	        String userId = User.generateUserId();
-	        User.insertUser(userId, email, username, password, role);
-	        return "Registration successful. Your user ID is: " + userId;
+        return User.register(email, name, password, role);
+    }
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return "Error occurred during registration.";
-	    }
-	}
+    public static Response<Void> login(String email, String password) {
+        if (email.isEmpty() || password.isEmpty()) {
+            return Response.error("Email and Password must be filled.");
+        }
 
+        Response<Void> loginResponse = User.login(email, password);
+        if (loginResponse.isSuccess()) {
+            Auth.set(User.getUserByEmail(email).getData()); // Store the authenticated user
+        }
 
-	public String login(String email, String password) {
-	    if (email == null || email.isEmpty()) return null;
-	    if (password == null || password.isEmpty()) return null;
+        return loginResponse;
+    }
 
-	    try {
-	        Optional<User> userOpt = User.getUserByEmail(email);
-	        if (userOpt.isPresent()) {
-	            User user = userOpt.get();
-	            if (user.getPassword().equals(password)) {
-	                System.out.println("User logged in with ID: " + user.getUserId());
-	                return user.getRole().toLowerCase();
-	            } else {
-	                return null;
-	            }
-	        } else {
-	            return null;
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return null;
-	    }
-	}
+    public static Response<Void> changeProfile(String email, String name, String oldPassword, String newPassword) {
+        User currentUser = Auth.get();
+
+        if (currentUser == null) {
+            return Response.error("No authenticated user found.");
+        }
+
+        Response<Void> validationResponse = currentUser.checkChangeProfileInput(email, name, oldPassword, newPassword);
+        if (!validationResponse.isSuccess()) {
+            return validationResponse;
+        }
+
+        if (!email.equals(currentUser.getEmail()) && getUserByEmail(email).getData() != null) {
+            return Response.error("Email is already in use.");
+        }
+
+        if (!name.equals(currentUser.getUsername()) && getUserByUsername(name).getData() != null) {
+            return Response.error("Username is already taken.");
+        }
+
+        return currentUser.changeProfile(email, name, oldPassword, newPassword);
+    }
+
+    public static void logout() {
+        Auth.clear(); 
+    }
+
+    public static User getAuthenticatedUser() {
+        return Auth.get();
+    }
+
+    public static String getAuthenticatedUserRole() {
+        User currentUser = Auth.get();
+        return currentUser != null ? currentUser.getRole() : null;
+    }
+
+    public static String getAuthenticatedUserId() {
+        User currentUser = Auth.get();
+        return currentUser != null ? currentUser.getUserId() : null;
+    }
+
+    public static Response<User> getUserByEmail(String email) {
+        if (email.isEmpty()) {
+            return Response.error("Email must be filled.");
+        }
+        return User.getUserByEmail(email);
+    }
+
+    public static Response<User> getUserByUsername(String name) {
+        if (name.isEmpty()) {
+            return Response.error("Username must be filled.");
+        }
+        return User.getUserByUsername(name);
+    }
 }

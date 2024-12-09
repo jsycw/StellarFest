@@ -1,100 +1,117 @@
 package views;
 
+import controllers.UserController;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import utils.Response;
+
 public class ChangeProfileView {
-//    private VBox root;
-//    private GridPane grid;
-//    private Label emailLabel, nameLabel, oldPasswordLabel, newPasswordLabel;
-//    private TextField emailInput, nameInput;
-//    private PasswordField oldPasswordInput, newPasswordInput;
-//    private Button updateButton, backButton;
-//    private Scene scene;
-//
-//    public void init() {
-//        root = new VBox();
-//        grid = new GridPane();
-//
-//        emailLabel = new Label("New Email:");
-//        nameLabel = new Label("New Name:");
-//        oldPasswordLabel = new Label("Current Password:");
-//        newPasswordLabel = new Label("New Password:");
-//
-//        emailInput = new TextField();
-//        nameInput = new TextField();
-//        oldPasswordInput = new PasswordField();
-//        newPasswordInput = new PasswordField();
-//
-//        updateButton = new Button("Update Profile");
-//        backButton = new Button("Back");
-//    }
-//
-//    public void layout() {
-//        grid.add(emailLabel, 0, 0);
-//        grid.add(emailInput, 1, 0);
-//        grid.add(nameLabel, 0, 1);
-//        grid.add(nameInput, 1, 1);
-//        grid.add(oldPasswordLabel, 0, 2);
-//        grid.add(oldPasswordInput, 1, 2);
-//        grid.add(newPasswordLabel, 0, 3);
-//        grid.add(newPasswordInput, 1, 3);
-//        grid.add(updateButton, 1, 4);
-//        grid.add(backButton, 1, 5);
-//
-//        grid.setHgap(10);
-//        grid.setVgap(10);
-//        grid.setAlignment(Pos.CENTER);
-//
-//        root.getChildren().add(grid);
-//        root.setPadding(new Insets(20));
-//        root.setAlignment(Pos.CENTER);
-//    }
-//
-//    public void style() {
-//        root.setSpacing(20);
-//        updateButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
-//        backButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
-//    }
-//
-//    public void setEventHandlers(Stage stage, String currentEmail) {
-//    	updateButton.setOnAction(e -> {
-//    	    String newEmail = emailInput.getText();
-//    	    String newName = nameInput.getText();
-//    	    String oldPassword = oldPasswordInput.getText();
-//    	    String newPassword = newPasswordInput.getText();
-//
-//    	    if (oldPassword.isEmpty()) {
-//    	        Alert alert = new Alert(Alert.AlertType.ERROR, "Current password is required.", ButtonType.OK);
-//    	        alert.showAndWait();
-//    	        return;
-//    	    }
-//
-//    	    UserController userController = new UserController();
-//    	    String result = userController.changeProfile(
-//    	        currentEmail,
-//    	        newEmail.isEmpty() ? null : newEmail,
-//    	        newName.isEmpty() ? null : newName,
-//    	        oldPassword,
-//    	        newPassword.isEmpty() ? null : newPassword
-//    	    );
-//
-//    	    Alert alert = new Alert(
-//    	        result.startsWith("Profile updated") ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR,
-//    	        result,
-//    	        ButtonType.OK
-//    	    );
-//    	    alert.showAndWait();
-//    	});
-//    }
-//
-//    public static void display(Stage stage, String currentEmail) {
-//        ChangeProfileView changeProfileView = new ChangeProfileView();
-//        changeProfileView.init();
-//        changeProfileView.layout();
-//        changeProfileView.style();
-//        changeProfileView.setEventHandlers(stage, currentEmail);
-//
-//        changeProfileView.scene = new Scene(changeProfileView.root, 400, 300);
-//        stage.setScene(changeProfileView.scene);
-//        stage.setTitle("Change Profile");
-//        stage.show();
-//    }
+
+    private VBox root;
+    private Label titleLabel;
+    private TextField emailField, nameField;
+    private PasswordField oldPasswordField, newPasswordField;
+    private Button updateButton, backButton;
+    private Scene scene;
+
+    public void init() {
+        root = new VBox(15);
+        titleLabel = new Label("Change Profile");
+
+        emailField = new TextField();
+        nameField = new TextField();
+        oldPasswordField = new PasswordField();
+        newPasswordField = new PasswordField();
+
+        updateButton = new Button("Update Profile");
+        backButton = new Button("Back");
+
+        emailField.setPromptText("Enter new email");
+        nameField.setPromptText("Enter new name");
+        oldPasswordField.setPromptText("Enter old password");
+        newPasswordField.setPromptText("Enter new password");
+    }
+
+    public void layout() {
+        root.getChildren().addAll(
+                titleLabel,
+                new Label("Email:"), emailField,
+                new Label("Name:"), nameField,
+                new Label("Old Password:"), oldPasswordField,
+                new Label("New Password:"), newPasswordField,
+                updateButton, backButton
+        );
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(20));
+        root.setSpacing(10);
+
+        titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+    }
+
+    public void setEventHandlers(Stage stage) {
+        updateButton.setOnAction(e -> {
+            String email = emailField.getText().trim();
+            String name = nameField.getText().trim();
+            String oldPassword = oldPasswordField.getText();
+            String newPassword = newPasswordField.getText();
+
+            Response<Void> response = UserController.changeProfile(email, name, oldPassword, newPassword);
+
+            if (response.isSuccess()) {
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Profile updated successfully!", ButtonType.OK);
+                successAlert.showAndWait();
+            } else {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR, response.getMessage(), ButtonType.OK);
+                errorAlert.showAndWait();
+            }
+        });
+
+        backButton.setOnAction(e -> {
+            String userRole = UserController.getAuthenticatedUserRole();
+
+            if (userRole == null) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Unable to determine user role. Please log in again.", ButtonType.OK);
+                errorAlert.showAndWait();
+                LoginView.display(stage); 
+                return;
+            }
+
+            switch (userRole) {
+            	case "Admin":
+            		AdminHomeView.display(stage, UserController.getAuthenticatedUserId());
+            		break;
+                case "Event Organizer":
+                    EventOrganizerHomeView.display(stage);
+                    break;
+                case "Vendor":
+                    VendorHomeView.display(stage, UserController.getAuthenticatedUserId());
+                    break;
+                case "Guest":
+                    GuestHomeView.display(stage, UserController.getAuthenticatedUserId());
+                    break;
+                default:
+                    Alert unknownRoleAlert = new Alert(Alert.AlertType.ERROR, "Unknown role: " + userRole, ButtonType.OK);
+                    unknownRoleAlert.showAndWait();
+                    LoginView.display(stage); 
+                    break;
+            }
+        });
+
+    }
+
+    public static void display(Stage stage) {
+        ChangeProfileView view = new ChangeProfileView();
+        view.init();
+        view.layout();
+        view.setEventHandlers(stage);
+
+        view.scene = new Scene(view.root, 400, 400);
+        stage.setScene(view.scene);
+        stage.setTitle("Change Profile");
+        stage.show();
+    }
 }
