@@ -67,7 +67,7 @@ public class EventOrganizer extends User {
         return Response.error("Event not found");
     }
 
-    public static Response<List<User>> getGuests(String eventId) {
+    public static Response<List<User>> getInvitedGuests(String eventId) {
         String query = "SELECT u.user_id, u.user_email, u.user_name FROM users u " +
                        "JOIN invitations i ON u.user_id = i.user_id " +
                        "WHERE i.event_id = ? AND i.invitation_role = 'Guest' AND i.invitation_status = 1";
@@ -91,7 +91,7 @@ public class EventOrganizer extends User {
         }
     }
 
-    public static Response<List<User>> getVendors(String eventId) {
+    public static Response<List<User>> getInvitedVendors(String eventId) {
         String query = "SELECT u.user_id, u.user_email, u.user_name FROM users u " +
                        "JOIN invitations i ON u.user_id = i.user_id " +
                        "WHERE i.event_id = ? AND i.invitation_role = 'Vendor' AND i.invitation_status = 1";
@@ -114,6 +114,66 @@ public class EventOrganizer extends User {
             return Response.error("Error fetching vendors: " + e.getMessage());
         }
     }
+    
+    public static Response<List<User>> getUninvitedGuests(String eventId) {
+        String query = "SELECT u.user_id, u.user_email, u.user_name " +
+                       "FROM users u " +
+                       "WHERE u.user_role = 'Guest' " +
+                       "AND NOT EXISTS (" +
+                       "    SELECT 1 FROM invitations i " +
+                       "    WHERE i.user_id = u.user_id " +
+                       "    AND i.event_id = ? " +
+                       ")";
+        try (PreparedStatement ps = db.preparedStatement(query)) {
+            ps.setString(1, eventId);
+            ResultSet rs = ps.executeQuery();
+
+            List<User> guests = new ArrayList<>();
+            while (rs.next()) {
+                String userId = rs.getString("user_id");
+                String userEmail = rs.getString("user_email");
+                String userName = rs.getString("user_name");
+
+                guests.add(new User(userId, userEmail, userName, "", "Guest"));
+            }
+
+            return Response.success("Uninvited guests fetched successfully", guests);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Response.error("Error fetching uninvited guests: " + e.getMessage());
+        }
+    }
+
+    public static Response<List<User>> getUninvitedVendors(String eventId) {
+        String query = "SELECT u.user_id, u.user_email, u.user_name " +
+                       "FROM users u " +
+                       "WHERE u.user_role = 'Vendor' " +
+                       "AND NOT EXISTS (" +
+                       "    SELECT 1 FROM invitations i " +
+                       "    WHERE i.user_id = u.user_id " +
+                       "    AND i.event_id = ? " +
+                       ")";
+        try (PreparedStatement ps = db.preparedStatement(query)) {
+            ps.setString(1, eventId);
+            ResultSet rs = ps.executeQuery();
+
+            List<User> vendors = new ArrayList<>();
+            while (rs.next()) {
+                String userId = rs.getString("user_id");
+                String userEmail = rs.getString("user_email");
+                String userName = rs.getString("user_name");
+
+                vendors.add(new User(userId, userEmail, userName, "", "Vendor"));
+            }
+
+            return Response.success("Uninvited vendors fetched successfully", vendors);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Response.error("Error fetching uninvited vendors: " + e.getMessage());
+        }
+    }
+
+    
 
     public static Response<Void> checkCreateEventInput(String eventName, LocalDate eventDate, String eventLocation, String eventDescription) {
         if (eventName.isEmpty()) {
@@ -131,7 +191,7 @@ public class EventOrganizer extends User {
         if (eventLocation.length() < 5) {
             return Response.error("Event location must be at least 5 characters");
         }
-        if (eventDescription.length() < 10) { //biar bs ngetes gakebanyakan jd 10 dl
+        if (eventDescription.length() < 200) { 
             return Response.error("Event description must be at least 200 characters");
         }
         if (eventDate.isBefore(LocalDate.now()) || eventDate.isEqual(LocalDate.now())) {

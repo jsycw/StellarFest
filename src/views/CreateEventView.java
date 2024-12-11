@@ -44,7 +44,6 @@ public class CreateEventView {
     }
 
     public void layout() {
-        // Organize elements into the root container
         root.getChildren().addAll(titleLabel, eventNameBox, eventDateBox, eventLocationBox, eventDescriptionBox,
                 createEventButton, backButton);
 

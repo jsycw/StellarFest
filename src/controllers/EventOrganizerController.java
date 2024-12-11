@@ -27,12 +27,20 @@ public class EventOrganizerController {
         return EventOrganizer.viewOrganizedEventDetails(eventId);
     }
 
-    public static Response<List<User>> getGuests(String eventId) {
-        return EventOrganizer.getGuests(eventId);
+    public static Response<List<User>> getInvitedGuests(String eventId) {
+        return EventOrganizer.getInvitedGuests(eventId);
     }
 
-    public static Response<List<User>> getVendors(String eventId) {
-        return EventOrganizer.getVendors(eventId);
+    public static Response<List<User>> getInvitedVendors(String eventId) {
+        return EventOrganizer.getInvitedVendors(eventId);
+    }
+    
+    public static Response<List<User>> getUninvitedGuests(String eventId) {
+        return EventOrganizer.getUninvitedGuests(eventId);
+    }
+
+    public static Response<List<User>> getUninvitedVendors(String eventId) {
+        return EventOrganizer.getUninvitedVendors(eventId);
     }
 
     public static Response<Void> checkCreateEventInput(String eventName, LocalDate date, String location, String description) {
