@@ -1,4 +1,4 @@
-package views;
+package views.eventorganizer;
 
 import controllers.UserController;
 import javafx.geometry.Insets;
@@ -9,9 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.User;
-import utils.Auth;
 import views.ChangeProfileView;
-import views.EventView;
 import views.LoginView;
 
 public class EventOrganizerHomeView {
@@ -24,7 +22,7 @@ public class EventOrganizerHomeView {
         root = new VBox(20);
         welcomeLabel = new Label("Welcome, " + name + " (ID: " + userId + ")!");
         changeProfileButton = new Button("Change Profile");
-        eventViewButton = new Button("Event View");
+        eventViewButton = new Button("View Event");
         logoutButton = new Button("Logout");
     }
 

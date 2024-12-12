@@ -77,7 +77,7 @@ public class User {
         try {
             ps.setString(1, email);
             ps.setString(2, name);
-            ps.setString(3, newPassword); // Update password as plain text
+            ps.setString(3, newPassword); 
             ps.setString(4, this.userId);
             ps.executeUpdate();
             return Response.success("Profile updated successfully", null);

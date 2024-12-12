@@ -1,4 +1,4 @@
-package views;
+package views.eventorganizer;
 
 import controllers.EventOrganizerController;
 import controllers.InvitationController;

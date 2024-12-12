@@ -59,7 +59,7 @@ public class Admin extends User {
             while (rs.next()) {
                 String userId = rs.getString("user_id");
                 String userEmail = rs.getString("user_email");
-                String username = rs.getString("username");
+                String username = rs.getString("user_name");
                 String userRole = rs.getString("user_role");
 
                 users.add(new User(userId, userEmail, username, null, userRole));
@@ -93,7 +93,7 @@ public class Admin extends User {
     }
 
     public static Response<List<Guest>> getGuestsByTransaction(String eventId) {
-        String query = "SELECT DISTINCT u.user_id, u.user_email, u.username " +
+        String query = "SELECT DISTINCT u.user_id, u.user_email, u.user_name " +
                 "FROM users u JOIN invitations i ON u.user_id = i.user_id " +
                 "WHERE i.event_id = ? AND i.invitation_role = 'Guest' AND i.invitation_status = 1";
         List<Guest> guests = new ArrayList<>();
@@ -104,7 +104,7 @@ public class Admin extends User {
             while (rs.next()) {
                 String userId = rs.getString("user_id");
                 String userEmail = rs.getString("user_email");
-                String username = rs.getString("username");
+                String username = rs.getString("user_name");
 
                 guests.add(new Guest(userId, userEmail, username, null));
             }
@@ -116,7 +116,7 @@ public class Admin extends User {
     }
 
     public static Response<List<Vendor>> getVendorsByTransaction(String eventId) {
-        String query = "SELECT DISTINCT u.user_id, u.user_email, u.username " +
+        String query = "SELECT DISTINCT u.user_id, u.user_email, u.user_name " +
                 "FROM users u JOIN invitations i ON u.user_id = i.user_id " +
                 "WHERE i.event_id = ? AND i.invitation_role = 'Vendor' AND i.invitation_status = 1";
         List<Vendor> vendors = new ArrayList<>();
@@ -127,7 +127,7 @@ public class Admin extends User {
             while (rs.next()) {
                 String userId = rs.getString("user_id");
                 String userEmail = rs.getString("user_email");
-                String username = rs.getString("username");
+                String username = rs.getString("user_name");
 
                 vendors.add(new Vendor(userId, userEmail, username, null));
             }

@@ -5,9 +5,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import utils.Response;
+import views.admin.AdminHomeView;
+import views.eventorganizer.EventOrganizerHomeView;
+import views.guest.GuestHomeView;
+import views.vendor.VendorHomeView;
 
 public class ChangeProfileView {
 
@@ -37,70 +42,85 @@ public class ChangeProfileView {
     }
 
     public void layout() {
-        root.getChildren().addAll(
-                titleLabel,
-                new Label("Email:"), emailField,
-                new Label("Name:"), nameField,
-                new Label("Old Password:"), oldPasswordField,
-                new Label("New Password:"), newPasswordField,
-                updateButton, backButton
-        );
+        GridPane grid = new GridPane();
+        grid.setVgap(10);
+        grid.setHgap(10);
+        grid.setPadding(new Insets(20));
+
+        grid.add(new Label("Email:"), 0, 0);
+        grid.add(emailField, 1, 0);
+        grid.add(new Label("Name:"), 0, 1);
+        grid.add(nameField, 1, 1);
+        grid.add(new Label("Old Password:"), 0, 2);
+        grid.add(oldPasswordField, 1, 2);
+        grid.add(new Label("New Password:"), 0, 3);
+        grid.add(newPasswordField, 1, 3);
+        grid.add(updateButton, 0, 4);
+        grid.add(backButton, 1, 4);
+
         root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(20));
-        root.setSpacing(10);
+        root.getChildren().addAll(titleLabel, grid);
 
         titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
     }
 
     public void setEventHandlers(Stage stage) {
-        updateButton.setOnAction(e -> {
-            String email = emailField.getText().trim();
-            String name = nameField.getText().trim();
-            String oldPassword = oldPasswordField.getText();
-            String newPassword = newPasswordField.getText();
+        updateButton.setOnAction(e -> handleProfileUpdate(stage));
+        backButton.setOnAction(e -> handleBackButton(stage));
+    }
 
-            Response<Void> response = UserController.changeProfile(email, name, oldPassword, newPassword);
+    private void handleProfileUpdate(Stage stage) {
+        String email = emailField.getText().trim();
+        String name = nameField.getText().trim();
+        String oldPassword = oldPasswordField.getText();
+        String newPassword = newPasswordField.getText();
 
-            if (response.isSuccess()) {
-                Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Profile updated successfully!", ButtonType.OK);
-                successAlert.showAndWait();
-            } else {
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR, response.getMessage(), ButtonType.OK);
-                errorAlert.showAndWait();
-            }
-        });
+        if (email.isEmpty() || name.isEmpty() || oldPassword.isEmpty() || newPassword.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "All fields are required!");
+            return;
+        }
 
-        backButton.setOnAction(e -> {
-            String userRole = UserController.getAuthenticatedUserRole();
+        Response<Void> response = UserController.changeProfile(email, name, oldPassword, newPassword);
 
-            if (userRole == null) {
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Unable to determine user role. Please log in again.", ButtonType.OK);
-                errorAlert.showAndWait();
-                LoginView.display(stage); 
-                return;
-            }
+        if (response.isSuccess()) {
+            showAlert(Alert.AlertType.INFORMATION, "Profile updated successfully!");
+        } else {
+            showAlert(Alert.AlertType.ERROR, response.getMessage());
+        }
+    }
 
-            switch (userRole) {
-            	case "Admin":
-            		AdminHomeView.display(stage, UserController.getAuthenticatedUserId());
-            		break;
-                case "Event Organizer":
-                    EventOrganizerHomeView.display(stage);
-                    break;
-                case "Vendor":
-                    VendorHomeView.display(stage, UserController.getAuthenticatedUserId());
-                    break;
-                case "Guest":
-                    GuestHomeView.display(stage, UserController.getAuthenticatedUserId());
-                    break;
-                default:
-                    Alert unknownRoleAlert = new Alert(Alert.AlertType.ERROR, "Unknown role: " + userRole, ButtonType.OK);
-                    unknownRoleAlert.showAndWait();
-                    LoginView.display(stage); 
-                    break;
-            }
-        });
+    private void handleBackButton(Stage stage) {
+        String userRole = UserController.getAuthenticatedUserRole();
 
+        if (userRole == null) {
+            showAlert(Alert.AlertType.ERROR, "Unable to determine user role. Please log in again.");
+            LoginView.display(stage);
+            return;
+        }
+
+        switch (userRole) {
+            case "Admin":
+                AdminHomeView.display(stage);
+                break;
+            case "Event Organizer":
+                EventOrganizerHomeView.display(stage);
+                break;
+            case "Vendor":
+                VendorHomeView.display(stage);
+                break;
+            case "Guest":
+                GuestHomeView.display(stage);
+                break;
+            default:
+                showAlert(Alert.AlertType.ERROR, "Unknown role: " + userRole);
+                LoginView.display(stage);
+                break;
+        }
+    }
+
+    private void showAlert(Alert.AlertType alertType, String message) {
+        Alert alert = new Alert(alertType, message, ButtonType.OK);
+        alert.showAndWait();
     }
 
     public static void display(Stage stage) {

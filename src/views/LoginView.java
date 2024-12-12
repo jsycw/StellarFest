@@ -9,6 +9,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import utils.Response;
+import views.admin.AdminHomeView;
+import views.eventorganizer.EventOrganizerHomeView;
+import views.guest.GuestHomeView;
+import views.vendor.VendorHomeView;
 
 public class LoginView {
     private VBox root;
@@ -69,16 +73,16 @@ public class LoginView {
                     if (role != null) {
                         switch (role) {
                             case "Admin":
-                                AdminHomeView.display(stage, userId);
+                                AdminHomeView.display(stage);
                                 break;
                             case "Event Organizer":
                                 EventOrganizerHomeView.display(stage);
                                 break;
                             case "Vendor":
-                                VendorHomeView.display(stage, userId);
+                                VendorHomeView.display(stage);
                                 break;
                             case "Guest":
-                                GuestHomeView.display(stage, userId);
+                                GuestHomeView.display(stage);
                                 break;
                             default:
                                 showErrorAlert("Invalid role.");

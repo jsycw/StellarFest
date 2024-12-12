@@ -1,4 +1,4 @@
-package views;
+package views.eventorganizer;
 
 import controllers.EventOrganizerController;
 import javafx.collections.FXCollections;
@@ -12,27 +12,31 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Event;
 import utils.Response;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
 
 public class EventView {
     private VBox root;
-    private Text title;
-    private Button createEventButton;
+    private Label titleLabel;
+    private Button createEventButton, backButton;
     private TableView<Event> tableView;
     private Scene scene;
 
     public void init(String userId) {
         root = new VBox(10);
-        title = new Text("Your Events");
+        titleLabel = new Label("Your Events");
         createEventButton = new Button("Create Event");
+        backButton = new Button("Back");
         tableView = new TableView<>();
     }
 
     public void layout() {
-        root.getChildren().addAll(title, createEventButton, tableView);
+        root.getChildren().addAll(titleLabel, createEventButton, backButton, tableView);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
+        
+        titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setPrefWidth(600);
@@ -47,17 +51,18 @@ public class EventView {
             ObservableList<Event> eventList = FXCollections.observableArrayList(events);
             tableView.setItems(eventList);
 
+            // Create columns and bind them using PropertyValueFactory
             TableColumn<Event, String> eventIdColumn = new TableColumn<>("Event ID");
-            eventIdColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEventId()));
+            eventIdColumn.setCellValueFactory(new PropertyValueFactory<>("eventId"));
 
             TableColumn<Event, String> eventNameColumn = new TableColumn<>("Event Name");
-            eventNameColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEventName()));
+            eventNameColumn.setCellValueFactory(new PropertyValueFactory<>("eventName"));
 
             TableColumn<Event, String> eventDateColumn = new TableColumn<>("Event Date");
-            eventDateColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEventDate()));
+            eventDateColumn.setCellValueFactory(new PropertyValueFactory<>("eventDate"));
 
             TableColumn<Event, String> eventLocationColumn = new TableColumn<>("Event Location");
-            eventLocationColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEventLocation()));
+            eventLocationColumn.setCellValueFactory(new PropertyValueFactory<>("eventLocation"));
 
             TableColumn<Event, Void> eventDetailsColumn = new TableColumn<>("Details");
             eventDetailsColumn.setCellFactory(param -> new TableCell<Event, Void>() {
@@ -82,13 +87,15 @@ public class EventView {
                 }
             });
 
+            // Add columns to the table
             tableView.getColumns().addAll(eventIdColumn, eventNameColumn, eventDateColumn, eventLocationColumn, eventDetailsColumn);
         } else {
             Text errorMessage = new Text("Failed to fetch events: " + eventsResponse.getMessage());
             root.getChildren().add(errorMessage);
         }
+        
+        backButton.setOnAction(e -> EventOrganizerHomeView.display(stage));
     }
-
 
     public static void display(Stage stage, String userId) {
         EventView view = new EventView();

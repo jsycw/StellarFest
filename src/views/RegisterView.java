@@ -39,8 +39,8 @@ public class RegisterView {
         passwordInput.setPromptText("Enter your password");
 
         roleComboBox = new ComboBox<>();
-        roleComboBox.getItems().addAll("Admin", "Event Organizer", "Vendor", "Guest");
-        roleComboBox.setValue("Guest"); // Default role
+        roleComboBox.getItems().addAll("Event Organizer", "Vendor", "Guest");
+        roleComboBox.setValue("Guest"); 
 
         registerButton = new Button("Register");
 
@@ -93,7 +93,7 @@ public class RegisterView {
             }
         });
 
-        loginLink.setOnAction(e -> LoginView.display(stage)); // Redirect to login view
+        loginLink.setOnAction(e -> LoginView.display(stage)); 
     }
 
     public static void display(Stage stage) {
