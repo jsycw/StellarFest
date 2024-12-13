@@ -7,11 +7,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Event;
 import utils.Response;
+import views.ChangeProfileView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
@@ -19,20 +21,32 @@ import java.util.List;
 public class EventView {
     private VBox root;
     private Label titleLabel;
-    private Button createEventButton, backButton;
+    private Button backButton;
     private TableView<Event> tableView;
     private Scene scene;
+    
+    private HBox navbar;
+    private Button changeProfileButton, eventViewButton, createEventViewButton;
 
     public void init(String userId) {
         root = new VBox(10);
         titleLabel = new Label("Your Events");
-        createEventButton = new Button("Create Event");
         backButton = new Button("Back");
         tableView = new TableView<>();
+        
+        changeProfileButton = new Button("Profile");
+        eventViewButton = new Button("Event");
+        createEventViewButton = new Button("Create Event");
+        backButton = new Button("Back");
     }
 
     public void layout() {
-        root.getChildren().addAll(titleLabel, createEventButton, backButton, tableView);
+    	navbar = new HBox(10);
+        navbar.getChildren().addAll(createEventViewButton, eventViewButton, changeProfileButton);
+        navbar.setAlignment(Pos.CENTER);
+        navbar.setPadding(new Insets(10));
+    	
+        root.getChildren().addAll(navbar, titleLabel, tableView, backButton);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
         
@@ -43,7 +57,12 @@ public class EventView {
     }
 
     public void setEventHandlers(Stage stage, String userId) {
-        createEventButton.setOnAction(e -> CreateEventView.display(stage, userId));
+    	createEventViewButton.setOnAction(e -> CreateEventView.display(stage, userId));
+    	
+        changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
+
+        eventViewButton.setOnAction(e -> EventView.display(stage, userId));
+    	
 
         Response<List<Event>> eventsResponse = EventOrganizerController.viewOrganizedEvents(userId);
         if (eventsResponse.isSuccess()) {
@@ -51,7 +70,6 @@ public class EventView {
             ObservableList<Event> eventList = FXCollections.observableArrayList(events);
             tableView.setItems(eventList);
 
-            // Create columns and bind them using PropertyValueFactory
             TableColumn<Event, String> eventIdColumn = new TableColumn<>("Event ID");
             eventIdColumn.setCellValueFactory(new PropertyValueFactory<>("eventId"));
 
@@ -87,7 +105,6 @@ public class EventView {
                 }
             });
 
-            // Add columns to the table
             tableView.getColumns().addAll(eventIdColumn, eventNameColumn, eventDateColumn, eventLocationColumn, eventDetailsColumn);
         } else {
             Text errorMessage = new Text("Failed to fetch events: " + eventsResponse.getMessage());

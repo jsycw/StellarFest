@@ -6,6 +6,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.User;
@@ -13,29 +15,43 @@ import views.ChangeProfileView;
 import views.LoginView;
 
 public class EventOrganizerHomeView {
-    private VBox root;
+    private BorderPane root;
+    private VBox contentBox;
+    private HBox navbar;
     private Label welcomeLabel;
-    private Button changeProfileButton, eventViewButton, logoutButton;
+    private Button changeProfileButton, eventViewButton, createEventButton, logoutButton;
     private Scene scene;
 
     public void init(String name, String userId) {
-        root = new VBox(20);
-        welcomeLabel = new Label("Welcome, " + name + " (ID: " + userId + ")!");
-        changeProfileButton = new Button("Change Profile");
-        eventViewButton = new Button("View Event");
+        root = new BorderPane();
+
+        createEventButton = new Button("Create Event");
+        changeProfileButton = new Button("Profile");
+        eventViewButton = new Button("Event");
         logoutButton = new Button("Logout");
+
+        contentBox = new VBox(20);
+        welcomeLabel = new Label("Welcome, " + name + " (ID: " + userId + ")!");
     }
 
     public void layout() {
-        root.getChildren().addAll(welcomeLabel, changeProfileButton, eventViewButton, logoutButton);
-        root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(20));
-        root.setSpacing(15);
+        navbar = new HBox(10);
+        navbar.getChildren().addAll(createEventButton, eventViewButton, changeProfileButton);
+        navbar.setAlignment(Pos.CENTER);
+        navbar.setPadding(new Insets(10));
 
+        contentBox.getChildren().addAll(welcomeLabel, logoutButton);
+        contentBox.setAlignment(Pos.CENTER);
+        contentBox.setPadding(new Insets(20));
         welcomeLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+        root.setTop(navbar);
+        root.setCenter(contentBox);
     }
 
     public void setEventHandlers(Stage stage, String userId) {
+    	createEventButton.setOnAction(e -> CreateEventView.display(stage, userId));
+    	
         changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
 
         eventViewButton.setOnAction(e -> EventView.display(stage, userId));

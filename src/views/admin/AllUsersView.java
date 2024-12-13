@@ -9,21 +9,33 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.User;
 import utils.Response;
+import views.ChangeProfileView;
 
 import java.util.List;
 
 public class AllUsersView {
-
+	private Button changeProfileButton, allEventButton, allUserButton;
+    private HBox navbar;
     private VBox root;
     private TableView<User> usersTable;
     private Button deleteButton;
 
     public void init() {
+    	changeProfileButton = new Button("Profile");
+        allEventButton = new Button("Event");
+        allUserButton = new Button("Users");
+        
+        navbar = new HBox(10);
+        navbar.getChildren().addAll(changeProfileButton, allEventButton, allUserButton);
+        navbar.setAlignment(Pos.CENTER);
+        navbar.setPadding(new Insets(10));
+        
         root = new VBox(20);
         root.setAlignment(Pos.TOP_CENTER);
         root.setPadding(new Insets(20));
@@ -48,7 +60,7 @@ public class AllUsersView {
 
         deleteButton = new Button("Delete");
 
-        root.getChildren().addAll(usersTable, deleteButton);
+        root.getChildren().addAll(navbar, usersTable, deleteButton);
     }
 
     private void loadUserData() {
@@ -87,6 +99,11 @@ public class AllUsersView {
     }
 
     public void setEventHandlers(Stage stage) {
+    	changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
+
+        allEventButton.setOnAction(e -> AllEventsView.display(stage));
+
+        allUserButton.setOnAction(e -> AllUsersView.display(stage));
         deleteButton.setOnAction(e -> {
             User selectedUser = usersTable.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {

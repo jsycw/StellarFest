@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import models.User;
 import views.ChangeProfileView;
 import views.LoginView;
-import views.VendorAndGuest.AccEventView;
 
 public class VendorHomeView {
     private VBox root;
@@ -50,7 +49,7 @@ public class VendorHomeView {
     public void setEventHandlers(Stage stage, String userId, String userRole) {
         changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
 
-        accEventViewButton.setOnAction(e -> AccEventView.display(stage, userId, userRole));
+//        accEventViewButton.setOnAction(e -> AccEventView.display(stage, userId, userRole));
 
         manageVendorButton.setOnAction(e -> ManageVendorView.display(stage));
 

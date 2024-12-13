@@ -5,8 +5,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import views.ChangeProfileView;
 
 import java.time.LocalDate;
 
@@ -17,7 +19,8 @@ public class CreateEventView {
     private TextField eventNameField, eventLocationField;
     private DatePicker eventDatePicker;
     private TextArea eventDescriptionField;
-    private Button createEventButton, backButton;
+    private HBox navbar;
+    private Button changeProfileButton, eventViewButton, createEventButton, createEventViewButton, backButton;
     private Scene scene;
 
     public void init() {
@@ -33,8 +36,11 @@ public class CreateEventView {
         eventDatePicker = new DatePicker();
         eventLocationField = new TextField();
         eventDescriptionField = new TextArea();
-
-        createEventButton = new Button("Create Event");
+        
+        createEventButton = new Button("Create");
+        changeProfileButton = new Button("Profile");
+        eventViewButton = new Button("Event");
+        createEventViewButton = new Button("Create Event");
         backButton = new Button("Back");
 
         eventNameBox.getChildren().addAll(new Label("Event Name:"), eventNameField);
@@ -44,7 +50,12 @@ public class CreateEventView {
     }
 
     public void layout() {
-        root.getChildren().addAll(titleLabel, eventNameBox, eventDateBox, eventLocationBox, eventDescriptionBox,
+    	navbar = new HBox(10);
+        navbar.getChildren().addAll(createEventViewButton, eventViewButton, changeProfileButton);
+        navbar.setAlignment(Pos.CENTER);
+        navbar.setPadding(new Insets(10));
+        
+        root.getChildren().addAll(navbar, titleLabel, eventNameBox, eventDateBox, eventLocationBox, eventDescriptionBox,
                 createEventButton, backButton);
 
         root.setAlignment(Pos.CENTER);
@@ -58,6 +69,13 @@ public class CreateEventView {
     }
 
     public void setEventHandlers(Stage stage, String userId) {
+    	createEventViewButton.setOnAction(e -> CreateEventView.display(stage, userId));
+    	
+        changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
+
+        eventViewButton.setOnAction(e -> EventView.display(stage, userId));
+    	
+    	
         createEventButton.setOnAction(e -> {
             String eventName = eventNameField.getText();
             LocalDate eventDate = eventDatePicker.getValue();
@@ -78,7 +96,7 @@ public class CreateEventView {
             }
         });
 
-        backButton.setOnAction(e -> EventView.display(stage, userId));
+        backButton.setOnAction(e -> EventOrganizerHomeView.display(stage));
     }
 
     private void showAlert(Alert.AlertType alertType, String message, String title) {

@@ -191,8 +191,8 @@ public class EventOrganizer extends User {
         if (eventLocation.length() < 5) {
             return Response.error("Event location must be at least 5 characters");
         }
-        if (eventDescription.length() < 200) { 
-            return Response.error("Event description must be at least 200 characters");
+        if (eventDescription.length() > 200) { 
+            return Response.error("Event description cannot be more than 200 characters");
         }
         if (eventDate.isBefore(LocalDate.now()) || eventDate.isEqual(LocalDate.now())) {
             return Response.error("Event date must be in the future");

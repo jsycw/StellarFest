@@ -37,7 +37,7 @@ public class VendorController {
         return loggedInVendor.manageVendorProduct(productDescription, productName);
     }
 
-    public static Response<VendorProduct> retrieveVendorProductDetails(String vendorId) {
+    public static Response<VendorProduct> getVendorProductDetails(String vendorId) {
         return Vendor.getVendorProductDetails(vendorId);
     }
 

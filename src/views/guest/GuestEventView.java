@@ -7,17 +7,22 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Event;
 import utils.Response;
+import views.ChangeProfileView;
 import utils.Auth;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
 
 public class GuestEventView {
+	private Button changeProfileButton, accEventViewButton, viewInvitationButton, logoutButton;
+    private HBox navbar;
+    
     private VBox root;
     private Label titleLabel;
     private Button backButton;
@@ -25,6 +30,14 @@ public class GuestEventView {
     private Scene scene;
 
     public void init() {
+//    	changeProfileButton = new Button("Profile");
+//        accEventViewButton = new Button("Event");
+//        viewInvitationButton = new Button("Invitation");
+//        navbar = new HBox(10);
+//        navbar.getChildren().addAll(changeProfileButton, accEventViewButton, viewInvitationButton);
+//        navbar.setAlignment(Pos.CENTER);
+//        navbar.setPadding(new Insets(10));
+        
         root = new VBox(10);
         titleLabel = new Label("Your Accepted Events");
         backButton = new Button("Back");
@@ -32,7 +45,7 @@ public class GuestEventView {
     }
 
     public void layout() {
-        root.getChildren().addAll(titleLabel, backButton, tableView);
+        root.getChildren().addAll(navbar, titleLabel, backButton, tableView);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
         
@@ -43,6 +56,7 @@ public class GuestEventView {
     }
 
     public void setEventHandlers(Stage stage, String userId) {
+
         backButton.setOnAction(e -> GuestHomeView.display(stage));
         loadAcceptedEvents(userId);
     }
@@ -55,10 +69,6 @@ public class GuestEventView {
             List<Event> events = response.getData();
             ObservableList<Event> eventList = FXCollections.observableArrayList(events);
             tableView.setItems(eventList);
-
-            // Create columns
-            TableColumn<Event, String> eventIdColumn = new TableColumn<>("Event ID");
-            eventIdColumn.setCellValueFactory(new PropertyValueFactory<>("eventId"));
 
             TableColumn<Event, String> eventNameColumn = new TableColumn<>("Event Name");
             eventNameColumn.setCellValueFactory(new PropertyValueFactory<>("eventName"));
@@ -92,7 +102,7 @@ public class GuestEventView {
             });
 
             tableView.getColumns().clear();
-            tableView.getColumns().addAll(eventIdColumn, eventNameColumn, eventDateColumn, eventLocationColumn, detailsColumn);
+            tableView.getColumns().addAll(eventNameColumn, eventDateColumn, eventLocationColumn, detailsColumn);
         } else {
             Text errorMessage = new Text("Failed to fetch events: " + response.getMessage());
             root.getChildren().add(errorMessage);

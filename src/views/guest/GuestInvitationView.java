@@ -59,12 +59,6 @@ public class GuestInvitationView {
             ObservableList<Invitation> invitationList = FXCollections.observableArrayList(invitations);
             tableView.setItems(invitationList);
             
-            TableColumn<Invitation, String> invitationIdColumn = new TableColumn<>("Invitation ID");
-            invitationIdColumn.setCellValueFactory(new PropertyValueFactory<>("invitationId"));
-
-            TableColumn<Invitation, String> eventIdColumn = new TableColumn<>("Event ID");
-            eventIdColumn.setCellValueFactory(new PropertyValueFactory<>("eventId"));
-            
             TableColumn<Invitation, String> eventNameColumn = new TableColumn<>("Event Name");
             eventNameColumn.setCellValueFactory(new PropertyValueFactory<>("eventName"));
 
@@ -116,7 +110,7 @@ public class GuestInvitationView {
 
             
             tableView.getColumns().clear();
-            tableView.getColumns().addAll(invitationIdColumn, eventIdColumn, eventNameColumn, statusColumn, roleColumn, actionColumn);
+            tableView.getColumns().addAll(eventNameColumn, statusColumn, roleColumn, actionColumn);
         } 
         else {
             Text errorMessage = new Text("Failed to fetch invitations: " + response.getMessage());

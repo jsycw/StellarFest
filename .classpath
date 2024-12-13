@@ -6,55 +6,47 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/javafx-sdk-17.0.7/lib/javafx.base.jar" sourcepath="C:/Users/user/Downloads/javafx-sdk-17.0.7/src.zip">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/javafx-sdk-17.0.7/lib/javafx.base.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
-			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/javafx-sdk-17.0.7/lib/javafx.controls.jar" sourcepath="C:/Users/user/Downloads/javafx-sdk-17.0.7/src.zip">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/javafx-sdk-17.0.7/lib/javafx.controls.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
-			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/javafx-sdk-17.0.7/lib/javafx.fxml.jar" sourcepath="C:/Users/user/Downloads/javafx-sdk-17.0.7/src.zip">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/javafx-sdk-17.0.7/lib/javafx.fxml.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
-			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/javafx-sdk-17.0.7/lib/javafx.graphics.jar" sourcepath="C:/Users/user/Downloads/javafx-sdk-17.0.7/src.zip">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/javafx-sdk-17.0.7/lib/javafx.graphics.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
-			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/javafx-sdk-17.0.7/lib/javafx.media.jar" sourcepath="C:/Users/user/Downloads/javafx-sdk-17.0.7/src.zip">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/javafx-sdk-17.0.7/lib/javafx.media.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
-			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/javafx-sdk-17.0.7/lib/javafx.swing.jar" sourcepath="C:/Users/user/Downloads/javafx-sdk-17.0.7/src.zip">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/javafx-sdk-17.0.7/lib/javafx.swing.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
-			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/javafx-sdk-17.0.7/lib/javafx.web.jar" sourcepath="C:/Users/user/Downloads/javafx-sdk-17.0.7/src.zip">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/javafx-sdk-17.0.7/lib/javafx.web.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
-			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/javafx-sdk-17.0.7/lib/javafx-swt.jar" sourcepath="C:/Users/user/Downloads/javafx-sdk-17.0.7/src.zip">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/javafx-sdk-17.0.7/lib/javafx-swt.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
-			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/mysql-connector-java-8.0.24.jar">
+	<classpathentry kind="lib" path="C:/Users/jessy/Desktop/University/Semester 5/ooad/mysql-connector-java-8.0.24.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

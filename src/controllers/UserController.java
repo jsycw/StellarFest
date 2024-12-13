@@ -29,7 +29,7 @@ public class UserController {
 
         Response<Void> loginResponse = User.login(email, password);
         if (loginResponse.isSuccess()) {
-            Auth.set(User.getUserByEmail(email).getData()); // Store the authenticated user
+            Auth.set(User.getUserByEmail(email).getData()); 
         }
 
         return loginResponse;

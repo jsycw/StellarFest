@@ -6,21 +6,35 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.Event;
 import utils.Response;
+import views.ChangeProfileView;
 
 import java.util.List;
 
 public class AllEventsView {
-
+	private Button changeProfileButton, allEventButton, allUserButton;
+    private HBox navbar;
+    
     private VBox root;
     private TableView<Event> eventsTable;
     private Button deleteButton;
 
     public void init() {
+    	
+    	changeProfileButton = new Button("Profile");
+        allEventButton = new Button("Event");
+        allUserButton = new Button("Users");
+        
+        navbar = new HBox(10);
+        navbar.getChildren().addAll(changeProfileButton, allEventButton, allUserButton);
+        navbar.setAlignment(Pos.CENTER);
+        navbar.setPadding(new Insets(10));
+        
         root = new VBox(20);
         root.setAlignment(Pos.TOP_CENTER);
         root.setPadding(new Insets(20));
@@ -46,7 +60,7 @@ public class AllEventsView {
 
         deleteButton = new Button("Delete");
 
-        root.getChildren().addAll(eventsTable, deleteButton);
+        root.getChildren().addAll(navbar, eventsTable, deleteButton);
     }
 
     private void loadEventData() {
@@ -85,6 +99,13 @@ public class AllEventsView {
     }
 
     public void setEventHandlers(Stage stage) {
+    	
+    	changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
+
+        allEventButton.setOnAction(e -> AllEventsView.display(stage));
+
+        allUserButton.setOnAction(e -> AllUsersView.display(stage));
+
         deleteButton.setOnAction(e -> {
             Event selectedEvent = eventsTable.getSelectionModel().getSelectedItem();
             if (selectedEvent != null) {

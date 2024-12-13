@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 import models.User;
 import views.ChangeProfileView;
 import views.LoginView;
-import views.VendorAndGuest.AccEventView;
 import views.vendor.ManageVendorView;
 import views.vendor.VendorHomeView;
 
