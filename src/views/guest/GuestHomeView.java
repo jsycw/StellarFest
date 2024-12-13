@@ -12,16 +12,18 @@ import javafx.stage.Stage;
 import models.User;
 import views.ChangeProfileView;
 import views.LoginView;
-import views.VendorAndGuest.AccEventView;
+
 
 public class GuestHomeView {
+	private User user;
     private VBox root;
     private Label welcomeLabel;
     private Button changeProfileButton, accEventViewButton, viewInvitationButton, logoutButton;
     private HBox navbar;
     private Scene scene;
 
-    public void init(String name, String userId) {
+    public void init(String name, String userId, User user) {
+    	this.user = user;
         root = new VBox(20);
 
         welcomeLabel = new Label("Welcome, " + name + " (ID: " + userId + ")!");
@@ -38,19 +40,17 @@ public class GuestHomeView {
     }
 
     public void layout() {
-        root.getChildren().addAll(navbar, welcomeLabel, logoutButton);
+    	root.getChildren().addAll(welcomeLabel, navbar, logoutButton);
         root.setAlignment(Pos.TOP_CENTER);
-        root.setPadding(new Insets(20));
+        root.setPadding(new Insets(40));
         root.setSpacing(20);
-
         welcomeLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
     }
 
     public void setEventHandlers(Stage stage, String userId, String userRole) {
         changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
-
-        accEventViewButton.setOnAction(e -> AccEventView.display(stage, userId, userRole));
-
+        accEventViewButton.setOnAction(e -> GuestEventView.display(stage, userId, userRole));
+        viewInvitationButton.setOnAction(e -> GuestInvitationView.display(stage, user.getEmail())); 
         logoutButton.setOnAction(e -> {
             UserController.logout();
             LoginView.display(stage);
@@ -63,13 +63,11 @@ public class GuestHomeView {
             LoginView.display(stage);
             return;
         }
-
         String userRole = user.getRole();
         GuestHomeView view = new GuestHomeView();
-        view.init(user.getUsername(), user.getUserId());
+        view.init(user.getUsername(), user.getUserId(), user); 
         view.layout();
         view.setEventHandlers(stage, user.getUserId(), userRole);
-
         view.scene = new Scene(view.root, 400, 300);
         stage.setScene(view.scene);
         stage.setTitle("Guest Home");

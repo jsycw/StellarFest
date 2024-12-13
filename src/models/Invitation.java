@@ -14,15 +14,17 @@ public class Invitation {
     private String userId;
     private String invitationStatus;
     private String invitationRole;
+	private String eventName;
 
     private static Connect db = Connect.getInstance();
 
-    public Invitation(String invitationId, String eventId, String userId, String invitationStatus, String invitationRole) {
+    public Invitation(String invitationId, String eventId, String userId, String invitationStatus, String invitationRole, String eventName) {
         this.invitationId = invitationId;
         this.eventId = eventId;
         this.userId = userId;
         this.invitationStatus = invitationStatus;
         this.invitationRole = invitationRole;
+        this.eventName = eventName;
     }
     
     public static boolean hasAccepted(String userId, String eventId) {
@@ -85,9 +87,11 @@ public class Invitation {
 
     public static Response<List<Invitation>> getInvitations(String email) {
         String query = String.format(
-                "SELECT invitation_id, event_id, i.user_id, invitation_role " +
-                        "FROM invitations i JOIN users u ON i.user_id = u.user_id " +
-                        "WHERE user_email = '%s' AND invitation_status = 0", email
+                "SELECT i.invitation_id, i.event_id, i.user_id, i.invitation_role, e.event_name " +
+                        "FROM invitations i " + 
+                        "JOIN users u ON i.user_id = u.user_id " +
+                        "JOIN events e ON i.event_id = e.event_id " +
+                        "WHERE u.user_email = '%s' AND i.invitation_status = 0", email
         );
 
         ResultSet rs = db.execQuery(query);
@@ -99,15 +103,20 @@ public class Invitation {
                 String eventId = rs.getString("event_id");
                 String userId = rs.getString("user_id");
                 String invitationRole = rs.getString("invitation_role");
+                String eventName = rs.getString("event_name");
 
-                invitations.add(new Invitation(invitationId, eventId, userId, "Not Accepted", invitationRole));
+                invitations.add(new Invitation(invitationId, eventId, userId, "Not Accepted", invitationRole, eventName));
             }
+
+            if (invitations.isEmpty()) {
+                return Response.error("No invitations found.");
+            }
+
+            return Response.success("Fetched invitations successfully.", invitations);
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.error("Error fetching invitations: " + e.getMessage());
         }
-
-        return Response.success("Fetched invitations successfully.", invitations);
     }
 
     private static String getNextIncrementalId() {
@@ -148,6 +157,15 @@ public class Invitation {
         return invitationRole;
     }
     
+    public String getEventName() {
+		return eventName;
+	}
+
+	public void setEventName(String eventName) {
+		this.eventName = eventName;
+	}
+    
+    
     public static Response<List<User>> getEventGuests(String eventId) {
         String query = String.format(
                 "SELECT u.user_id, u.user_email, u.user_name, u.user_role " +
@@ -175,6 +193,8 @@ public class Invitation {
 
         return Response.success("Fetched event guests successfully.", guests);
     }
+
+	
 
 
 }
