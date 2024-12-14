@@ -14,7 +14,7 @@ import utils.Response;
 
 import java.util.List;
 
-public class EventDetailsView {
+public class OrganizedEventDetailsView {
     private VBox root;
     private Label titleLabel, eventNameLabel, eventDateLabel, eventLocationLabel, eventDescriptionLabel;
     private Label vendorListLabel, guestListLabel;
@@ -137,7 +137,7 @@ public class EventDetailsView {
             }
         });
 
-        backButton.setOnAction(e -> EventView.display(stage, userId));
+        backButton.setOnAction(e -> OrganizedEventView.display(stage, userId));
 
         addVendorButton.setOnAction(e -> {
             AddVendorView.display(stage, eventId, userId);  
@@ -163,7 +163,7 @@ public class EventDetailsView {
     }
 
     public static void display(Stage stage, String eventId, String userId) {
-        EventDetailsView view = new EventDetailsView();
+        OrganizedEventDetailsView view = new OrganizedEventDetailsView();
         view.init();
         view.layout();
         view.setEventHandlers(stage, eventId, userId);

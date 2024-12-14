@@ -1,6 +1,7 @@
-package views.guest;
+package views.GuestAndVendor;
 
 import controllers.InvitationController;
+import controllers.UserController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -12,12 +13,17 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Invitation;
 import utils.Response;
+import views.LoginView;
+import views.admin.AdminHomeView;
+import views.eventorganizer.EventOrganizerHomeView;
+import views.guest.GuestHomeView;
+import views.vendor.VendorHomeView;
 import utils.Auth;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
 
-public class GuestInvitationView {
+public class InvitationView {
     private VBox root;
     private Label titleLabel;
     private Button refreshButton, backButton;
@@ -48,7 +54,7 @@ public class GuestInvitationView {
         
         loadInvitations(userEmail);
         
-        backButton.setOnAction(e -> GuestHomeView.display(stage));
+        backButton.setOnAction(e -> handleBackButton(stage));
     }
 
     private void loadInvitations(String userEmail) {
@@ -113,13 +119,41 @@ public class GuestInvitationView {
             tableView.getColumns().addAll(eventNameColumn, statusColumn, roleColumn, actionColumn);
         } 
         else {
-            Text errorMessage = new Text("Failed to fetch invitations: " + response.getMessage());
+            Text errorMessage = new Text(response.getMessage());
             root.getChildren().add(errorMessage);
         }
     }
+    
+    private void handleBackButton(Stage stage) {
+        String userRole = UserController.getAuthenticatedUserRole();
+
+        if (userRole == null) {
+            showAlert(Alert.AlertType.ERROR, "Unable to determine user role. Please log in again.");
+            LoginView.display(stage);
+            return;
+        }
+
+        switch (userRole) {
+            case "Vendor":
+                VendorHomeView.display(stage);
+                break;
+            case "Guest":
+                GuestHomeView.display(stage);
+                break;
+            default:
+                showAlert(Alert.AlertType.ERROR, "Unknown role: " + userRole);
+                LoginView.display(stage);
+                break;
+        }
+    }
+    
+    private void showAlert(Alert.AlertType alertType, String message) {
+        Alert alert = new Alert(alertType, message, ButtonType.OK);
+        alert.showAndWait();
+    }
 
     public static void display(Stage stage, String userEmail) {
-        GuestInvitationView view = new GuestInvitationView();
+        InvitationView view = new InvitationView();
         view.init(userEmail);
         view.layout();
         view.setEventHandlers(stage, userEmail);

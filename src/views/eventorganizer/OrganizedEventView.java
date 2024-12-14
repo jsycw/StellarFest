@@ -18,7 +18,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
 
-public class EventView {
+public class OrganizedEventView {
     private VBox root;
     private Label titleLabel;
     private Button backButton;
@@ -61,7 +61,7 @@ public class EventView {
     	
         changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
 
-        eventViewButton.setOnAction(e -> EventView.display(stage, userId));
+        eventViewButton.setOnAction(e -> OrganizedEventView.display(stage, userId));
     	
 
         Response<List<Event>> eventsResponse = EventOrganizerController.viewOrganizedEvents(userId);
@@ -90,7 +90,7 @@ public class EventView {
                     btn.setOnAction(e -> {
                         Event event = getTableView().getItems().get(getIndex());
                         String eventId = event.getEventId();
-                        EventDetailsView.display(stage, eventId, userId);
+                        OrganizedEventDetailsView.display(stage, eventId, userId);
                     });
                 }
 
@@ -115,7 +115,7 @@ public class EventView {
     }
 
     public static void display(Stage stage, String userId) {
-        EventView view = new EventView();
+        OrganizedEventView view = new OrganizedEventView();
         view.init(userId);
         view.layout();
         view.setEventHandlers(stage, userId);

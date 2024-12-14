@@ -16,7 +16,7 @@ public class Vendor extends User {
         super(userId, userEmail, username, userPassword, "Vendor");
     }
 
-    public Response<Void> acceptEventInvitation(String eventId) {
+    public Response<Void> acceptInvitation(String eventId) {
         String query = "UPDATE invitations SET invitation_status = 1 WHERE user_id = ? AND event_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {
             ps.setString(1, this.getUserId());
@@ -32,7 +32,7 @@ public class Vendor extends User {
         return Response.error("Failed to accept invitation. No matching record found.");
     }
 
-    public static Response<List<Event>> fetchAcceptedEvents(String email) {
+    public static Response<List<Event>> viewAcceptedEvents(String email) {
         String query = "SELECT e.event_id, e.event_name, e.event_date, e.event_location, e.event_description, e.organizer_id " +
                 "FROM events e JOIN invitations i ON e.event_id = i.event_id " +
                 "JOIN users u ON u.user_id = i.user_id " +
@@ -61,51 +61,64 @@ public class Vendor extends User {
         return Response.success("Fetched accepted events successfully", events);
     }
 
-    public Response<Void> manageVendorProduct(String productDescription, String productName) {
-        String query = "INSERT INTO vendors (vendor_id, product_name, product_description) " +
-                "VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE " +
-                "product_name = VALUES(product_name), " +
-                "product_description = VALUES(product_description)";
-        try (PreparedStatement ps = db.preparedStatement(query)) {
-            ps.setString(1, this.getUserId());
-            ps.setString(2, productName);
-            ps.setString(3, productDescription);
-            ps.executeUpdate();
-            return Response.success("Product management updated successfully.", null);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Response.error("Failed to manage vendor product: " + e.getMessage());
-        }
-    }
+    public static Response<Void> manageVendor(String vendorId, String description, String product) {
+        PreparedStatement ps = db.preparedStatement(
+            "INSERT INTO vendors (vendor_id, product_name, product_description) "
+            + "VALUES (?, ?, ?) "
+            + "ON DUPLICATE KEY UPDATE "
+            + "product_name = VALUES(product_name), "
+            + "product_description = VALUES(product_description)"
+        );
 
-    public static Response<VendorProduct> getVendorProductDetails(String vendorId) {
-        String query = "SELECT product_name, product_description FROM vendors WHERE vendor_id = ?";
-        try (PreparedStatement ps = db.preparedStatement(query)) {
+        try {
             ps.setString(1, vendorId);
-            ResultSet rs = ps.executeQuery();
+            ps.setString(2, product);
+            ps.setString(3, description);
+            ps.executeUpdate();
 
-            if (rs.next()) {
-                String productName = rs.getString("product_name");
-                String productDescription = rs.getString("product_description");
-                return Response.success("Product details fetched successfully", new VendorProduct(productName, productDescription));
-            }
-            return Response.success("No product found for this vendor.", null);
+            return Response.success("Manage vendor success", null);
         } catch (SQLException e) {
             e.printStackTrace();
-            return Response.error("Error fetching product details: " + e.getMessage());
+            return Response.error("Manage vendor failed: " + e.getMessage());
         }
     }
 
-    public static Response<Void> validateVendorProductInput(String description, String productName) {
-        if (description == null || description.isEmpty()) {
-            return Response.error("Product description must be filled.");
+    public static Response<VendorProduct> getProduct(String vendorId) {
+        ResultSet rs = db.execQuery(
+            String.format(
+                "SELECT product_name, product_description "
+                + "FROM vendors "
+                + "WHERE vendor_id = '%s'",
+                vendorId
+            )
+        );
+
+        try {
+            if (rs.next()) {
+                String name = rs.getString("product_name");
+                String description = rs.getString("product_description");
+
+                return Response.success("Fetch product success", new VendorProduct(name, description));
+            }
+            return Response.success("No product", null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Response.error("Error fetching product: " + e.getMessage());
         }
-        if (productName == null || productName.isEmpty()) {
-            return Response.error("Product name must be filled.");
+    }
+
+    public static Response<Void> checkManageVendorInput(String description, String product) {
+        if (description.isEmpty()) {
+            return Response.error("Product description must be filled");
+        }
+        if (product.isEmpty()) {
+            return Response.error("Product name must be filled");
         }
         if (description.length() > 200) {
-            return Response.error("Product description must be 200 characters or less.");
+            return Response.error("Product description is maximum 200 characters long");
         }
-        return Response.success("Input validation successful.", null);
+
+        return Response.success("", null);
     }
+
 }

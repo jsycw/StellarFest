@@ -108,7 +108,7 @@ public class AddVendorView {
             }
         });
 
-        backButton.setOnAction(e -> EventDetailsView.display(stage, eventId, userId)); 
+        backButton.setOnAction(e -> OrganizedEventDetailsView.display(stage, eventId, userId)); 
     }
 
     public void populateUsers(List<User> users) {

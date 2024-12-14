@@ -73,7 +73,7 @@ public class CreateEventView {
     	
         changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
 
-        eventViewButton.setOnAction(e -> EventView.display(stage, userId));
+        eventViewButton.setOnAction(e -> OrganizedEventView.display(stage, userId));
     	
     	
         createEventButton.setOnAction(e -> {
@@ -89,7 +89,7 @@ public class CreateEventView {
 
                 if (response.isSuccess()) {
                     showAlert(Alert.AlertType.INFORMATION, "Event created successfully!", "Success");
-                    EventView.display(stage, userId);
+                    OrganizedEventView.display(stage, userId);
                 } else {
                     showAlert(Alert.AlertType.ERROR, response.getMessage(), "Error");
                 }

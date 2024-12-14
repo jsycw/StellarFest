@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 import models.User;
 import views.ChangeProfileView;
 import views.LoginView;
+import views.GuestAndVendor.AcceptedEventsView;
+import views.GuestAndVendor.InvitationView;
 
 
 public class GuestHomeView {
@@ -49,8 +51,8 @@ public class GuestHomeView {
 
     public void setEventHandlers(Stage stage, String userId, String userRole) {
         changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
-        accEventViewButton.setOnAction(e -> GuestEventView.display(stage, userId, userRole));
-        viewInvitationButton.setOnAction(e -> GuestInvitationView.display(stage, user.getEmail())); 
+        accEventViewButton.setOnAction(e -> AcceptedEventsView.display(stage, userId, userRole));
+        viewInvitationButton.setOnAction(e -> InvitationView.display(stage, user.getEmail())); 
         logoutButton.setOnAction(e -> {
             UserController.logout();
             LoginView.display(stage);

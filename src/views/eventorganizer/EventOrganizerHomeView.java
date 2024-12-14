@@ -54,7 +54,7 @@ public class EventOrganizerHomeView {
     	
         changeProfileButton.setOnAction(e -> ChangeProfileView.display(stage));
 
-        eventViewButton.setOnAction(e -> EventView.display(stage, userId));
+        eventViewButton.setOnAction(e -> OrganizedEventView.display(stage, userId));
 
         logoutButton.setOnAction(e -> {
             UserController.logout(); 
