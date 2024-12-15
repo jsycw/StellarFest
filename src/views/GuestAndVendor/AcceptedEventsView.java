@@ -35,6 +35,7 @@ public class AcceptedEventsView {
     private Button backButton;
     private TableView<Event> tableView;
     private Scene scene;
+	protected Stage stage;
 
     public void init() {
         root = new VBox(10);
@@ -56,16 +57,17 @@ public class AcceptedEventsView {
 
     public void setEventHandlers(Stage stage, String userId, String userRole) {
     	backButton.setOnAction(e -> handleBackButton(stage));
-        loadAcceptedEvents(userId, userRole);
+        loadAcceptedEvents(userId, userRole, stage);
     }
 
-    private void loadAcceptedEvents(String userId, String userRole) {
+    private void loadAcceptedEvents(String userId, String userRole, Stage stage) {
         String userEmail = Auth.get().getEmail();
         Response<List<Event>> response;
         
         if ("Vendor".equals(userRole)) {
             response = VendorController.viewAcceptedEvents(userEmail);  
-        } else {
+        } 
+        else {
             response = GuestController.viewAcceptedEvents(userEmail);  
         }
 
@@ -86,11 +88,10 @@ public class AcceptedEventsView {
             TableColumn<Event, Void> detailsColumn = new TableColumn<>("Details");
             detailsColumn.setCellFactory(param -> new TableCell<Event, Void>() {
                 private final Button detailBtn = new Button("View Details");
-
                 {
                     detailBtn.setOnAction(e -> {
                         Event event = getTableView().getItems().get(getIndex());
-                        showEventDetails(event);
+                        EventDetailsView.display(stage, event, userId, userRole);
                     });
                 }
 
@@ -115,13 +116,11 @@ public class AcceptedEventsView {
     
     private void handleBackButton(Stage stage) {
         String userRole = UserController.getAuthenticatedUserRole();
-
         if (userRole == null) {
             showAlert(Alert.AlertType.ERROR, "Unable to determine user role. Please log in again.");
             LoginView.display(stage);
             return;
         }
-
         switch (userRole) {
             case "Vendor":
                 VendorHomeView.display(stage);
@@ -141,26 +140,7 @@ public class AcceptedEventsView {
         alert.showAndWait();
     }
 
-    private void showEventDetails(Event event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Event Details");
-        alert.setHeaderText(event.getEventName());
-        
-        String content = String.format(
-            "Event ID: %s\n\n" +
-            "Date: %s\n\n" +
-            "Location: %s\n\n" +
-            "Description: %s",
-            event.getEventId(),
-            event.getEventDate(),
-            event.getEventLocation(),
-            event.getEventDescription()
-        );
-        
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
+   
     public static void display(Stage stage, String userId, String userRole) {
         AcceptedEventsView view = new AcceptedEventsView();
         view.init();
