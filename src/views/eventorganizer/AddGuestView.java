@@ -78,7 +78,7 @@ public class AddGuestView {
     }
 
     public void setEventHandlers(Stage stage, String eventId, String userId) {
-        Response<List<User>> uninvitedGuestsResponse = EventOrganizerController.getUninvitedGuests(eventId);
+        Response<List<User>> uninvitedGuestsResponse = EventOrganizerController.getGuests(eventId);
 
         if (uninvitedGuestsResponse.isSuccess()) {
             populateUsers(uninvitedGuestsResponse.getData());

@@ -92,7 +92,7 @@ public class Admin extends User {
         return Response.success("Fetch events success", events);
     }
 
-    public static Response<List<Guest>> getGuestsByTransaction(String eventId) {
+    public static Response<List<Guest>> getGuestsByTransactionID(String eventId) {
         String query = "SELECT DISTINCT u.user_id, u.user_email, u.user_name " +
                 "FROM users u JOIN invitations i ON u.user_id = i.user_id " +
                 "WHERE i.event_id = ? AND i.invitation_role = 'Guest' AND i.invitation_status = 1";
@@ -115,7 +115,7 @@ public class Admin extends User {
         return Response.success("Fetch event guests success", guests);
     }
 
-    public static Response<List<Vendor>> getVendorsByTransaction(String eventId) {
+    public static Response<List<Vendor>> getVendorsByTransactionID(String eventId) {
         String query = "SELECT DISTINCT u.user_id, u.user_email, u.user_name " +
                 "FROM users u JOIN invitations i ON u.user_id = i.user_id " +
                 "WHERE i.event_id = ? AND i.invitation_role = 'Vendor' AND i.invitation_status = 1";

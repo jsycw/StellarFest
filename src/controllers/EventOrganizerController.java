@@ -27,21 +27,29 @@ public class EventOrganizerController {
         return EventOrganizer.viewOrganizedEventDetails(eventId);
     }
 
-    public static Response<List<User>> getInvitedGuests(String eventId) {
-        return EventOrganizer.getInvitedGuests(eventId);
+    public static Response<List<User>> getGuestsByTransactionID(String eventId) {
+        return EventOrganizer.getGuestsByTransactionID(eventId);
     }
 
-    public static Response<List<User>> getInvitedVendors(String eventId) {
-        return EventOrganizer.getInvitedVendors(eventId);
+    public static Response<List<User>> getVendorsByTransactionID(String eventId) {
+        return EventOrganizer.getVendorsByTransactionID(eventId);
     }
     
-    public static Response<List<User>> getUninvitedGuests(String eventId) {
-        return EventOrganizer.getUninvitedGuests(eventId);
+    public static Response<List<User>> getGuests(String eventId) {
+        return EventOrganizer.getGuests(eventId);
     }
 
-    public static Response<List<User>> getUninvitedVendors(String eventId) {
-        return EventOrganizer.getUninvitedVendors(eventId);
+    public static Response<List<User>> getVendors(String eventId) {
+        return EventOrganizer.getVendors(eventId);
     }
+    
+    public static Response<Void> checkAddVendorInput(String vendorId) {
+		return EventOrganizer.checkAddVendorInput(vendorId);
+	}
+	
+	public static Response<Void> checkAddGuestInput(String guestId) {
+		return EventOrganizer.checkAddGuestInput(guestId);
+	}
 
     public static Response<Void> checkCreateEventInput(String eventName, LocalDate date, String location, String description) {
         return EventOrganizer.checkCreateEventInput(eventName, date, location, description);

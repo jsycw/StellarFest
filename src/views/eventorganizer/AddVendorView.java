@@ -78,7 +78,7 @@ public class AddVendorView {
     }
 
     public void setEventHandlers(Stage stage, String eventId, String userId) {
-        Response<List<User>> uninvitedVendorsResponse = EventOrganizerController.getUninvitedVendors(eventId);
+        Response<List<User>> uninvitedVendorsResponse = EventOrganizerController.getVendors(eventId);
 
         if (uninvitedVendorsResponse.isSuccess()) {
             populateUsers(uninvitedVendorsResponse.getData());

@@ -20,7 +20,7 @@ import views.ChangeProfileView;
 import java.util.List;
 
 public class AllUsersView {
-	private Button changeProfileButton, allEventButton, allUserButton;
+	private Button changeProfileButton, allEventButton, allUserButton, backButton;
     private HBox navbar;
     private VBox root;
     private TableView<User> usersTable;
@@ -30,6 +30,7 @@ public class AllUsersView {
     	changeProfileButton = new Button("Profile");
         allEventButton = new Button("Event");
         allUserButton = new Button("Users");
+        backButton = new Button("Back");
         
         navbar = new HBox(10);
         navbar.getChildren().addAll(changeProfileButton, allEventButton, allUserButton);
@@ -60,7 +61,7 @@ public class AllUsersView {
 
         deleteButton = new Button("Delete");
 
-        root.getChildren().addAll(navbar, usersTable, deleteButton);
+        root.getChildren().addAll(navbar, usersTable, deleteButton, backButton);
     }
 
     private void loadUserData() {
@@ -115,6 +116,8 @@ public class AllUsersView {
                 showErrorDialog("No user selected", "Please select a user to delete.");
             }
         });
+        
+        backButton.setOnAction(e -> AdminHomeView.display(stage));
     }
 
     private boolean showConfirmationDialog(String message) {

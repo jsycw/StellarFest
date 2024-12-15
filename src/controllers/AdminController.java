@@ -35,11 +35,11 @@ public class AdminController {
         return Admin.getAllEvents();
     }
 
-    public static Response<List<Guest>> getGuestsByTransaction(String eventId) {
-        return Admin.getGuestsByTransaction(eventId);
+    public static Response<List<Guest>> getGuestsByTransactionID(String eventId) {
+        return Admin.getGuestsByTransactionID(eventId);
     }
 
-    public static Response<List<Vendor>> getVendorsByTransaction(String eventId) {
-        return Admin.getVendorsByTransaction(eventId);
+    public static Response<List<Vendor>> getVendorsByTransactionID(String eventId) {
+        return Admin.getVendorsByTransactionID(eventId);
     }
 }

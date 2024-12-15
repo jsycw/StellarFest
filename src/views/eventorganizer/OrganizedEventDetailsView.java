@@ -96,7 +96,7 @@ public class OrganizedEventDetailsView {
             eventLocationLabel.setText("Event Location: " + event.getEventLocation());
             eventDescriptionLabel.setText("Event Description: " + event.getEventDescription());
 
-            Response<List<User>> vendorsResponse = EventOrganizerController.getInvitedVendors(eventId);
+            Response<List<User>> vendorsResponse = EventOrganizerController.getVendorsByTransactionID(eventId);
             if (vendorsResponse.isSuccess()) {
                 populateVendors(vendorsResponse.getData());
             } else {
@@ -104,7 +104,7 @@ public class OrganizedEventDetailsView {
                 alert.showAndWait();
             }
 
-            Response<List<User>> guestsResponse = EventOrganizerController.getInvitedGuests(eventId);
+            Response<List<User>> guestsResponse = EventOrganizerController.getGuestsByTransactionID(eventId);
             if (guestsResponse.isSuccess()) {
                 populateGuests(guestsResponse.getData());
             } else {

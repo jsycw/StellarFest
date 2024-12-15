@@ -17,7 +17,7 @@ import views.ChangeProfileView;
 import java.util.List;
 
 public class AllEventsView {
-	private Button changeProfileButton, allEventButton, allUserButton;
+	private Button changeProfileButton, allEventButton, allUserButton, backButton;
     private HBox navbar;
     
     private VBox root;
@@ -28,7 +28,8 @@ public class AllEventsView {
     	
     	changeProfileButton = new Button("Profile");
         allEventButton = new Button("Event");
-        allUserButton = new Button("Users");
+        allUserButton = new Button("Users");	
+        backButton = new Button("Back");
         
         navbar = new HBox(10);
         navbar.getChildren().addAll(changeProfileButton, allEventButton, allUserButton);
@@ -60,7 +61,7 @@ public class AllEventsView {
 
         deleteButton = new Button("Delete");
 
-        root.getChildren().addAll(navbar, eventsTable, deleteButton);
+        root.getChildren().addAll(navbar, eventsTable, deleteButton, backButton);
     }
 
     private void loadEventData() {
@@ -117,6 +118,8 @@ public class AllEventsView {
                 showErrorDialog("No event selected", "Please select an event to delete.");
             }
         });
+        
+        backButton.setOnAction(e -> AdminHomeView.display(stage));
 
         eventsTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {

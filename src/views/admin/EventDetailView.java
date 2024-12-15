@@ -79,7 +79,7 @@ public class EventDetailView {
             eventLocationLabel.setText("Event Location: " + event.getEventLocation());
             eventDescriptionLabel.setText("Event Description: " + event.getEventDescription());
 
-            Response<List<Vendor>> vendorsResponse = AdminController.getVendorsByTransaction(eventId);
+            Response<List<Vendor>> vendorsResponse = AdminController.getVendorsByTransactionID(eventId);
             if (vendorsResponse.isSuccess()) {
                 populateVendors(vendorsResponse.getData());
             } else {
@@ -87,7 +87,7 @@ public class EventDetailView {
                 alert.showAndWait();
             }
 
-            Response<List<Guest>> guestsResponse = AdminController.getGuestsByTransaction(eventId);
+            Response<List<Guest>> guestsResponse = AdminController.getGuestsByTransactionID(eventId);
             if (guestsResponse.isSuccess()) {
                 populateGuests(guestsResponse.getData());
             } else {

@@ -67,7 +67,7 @@ public class EventOrganizer extends User {
         return Response.error("Event not found");
     }
 
-    public static Response<List<User>> getInvitedGuests(String eventId) {
+    public static Response<List<User>> getGuestsByTransactionID(String eventId) {
         String query = "SELECT u.user_id, u.user_email, u.user_name FROM users u " +
                        "JOIN invitations i ON u.user_id = i.user_id " +
                        "WHERE i.event_id = ? AND i.invitation_role = 'Guest' AND i.invitation_status = 1";
@@ -91,7 +91,7 @@ public class EventOrganizer extends User {
         }
     }
 
-    public static Response<List<User>> getInvitedVendors(String eventId) {
+    public static Response<List<User>> getVendorsByTransactionID(String eventId) {
         String query = "SELECT u.user_id, u.user_email, u.user_name FROM users u " +
                        "JOIN invitations i ON u.user_id = i.user_id " +
                        "WHERE i.event_id = ? AND i.invitation_role = 'Vendor' AND i.invitation_status = 1";
@@ -115,7 +115,7 @@ public class EventOrganizer extends User {
         }
     }
     
-    public static Response<List<User>> getUninvitedGuests(String eventId) {
+    public static Response<List<User>> getGuests(String eventId) {
         String query = "SELECT u.user_id, u.user_email, u.user_name " +
                        "FROM users u " +
                        "WHERE u.user_role = 'Guest' " +
@@ -144,7 +144,7 @@ public class EventOrganizer extends User {
         }
     }
 
-    public static Response<List<User>> getUninvitedVendors(String eventId) {
+    public static Response<List<User>> getVendors(String eventId) {
         String query = "SELECT u.user_id, u.user_email, u.user_name " +
                        "FROM users u " +
                        "WHERE u.user_role = 'Vendor' " +
@@ -200,7 +200,21 @@ public class EventOrganizer extends User {
 
         return Response.success("Event input validated", null);
     }
-
+    
+    public static Response<Void> checkAddVendorInput(String vendorId) {
+		if(vendorId.isEmpty()) {
+			return Response.error("You must choose at least 1 vendor");
+		}
+		return Response.success("", null);
+	}
+	
+	public static Response<Void> checkAddGuestInput(String guestId) {
+		if(guestId.isEmpty()) {
+			return Response.error("You must choose at least 1 guest");
+		}
+		return Response.success("", null);
+	}
+	
     public static Response<Void> editEventName(String eventId, String eventName) {
         String query = "UPDATE events SET event_name = ? WHERE event_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {
