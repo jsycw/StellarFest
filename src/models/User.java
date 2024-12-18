@@ -27,6 +27,7 @@ public class User {
         this.role = role;
     }
 
+    // method untuk mendaftarkan user baru
     public static Response<Void> register(String email, String name, String password, String role) {
         String userId = getNextId();
 
@@ -51,6 +52,7 @@ public class User {
         }
     }
 
+    // validasi untuk masuk bagi user yang sudha terdaftar dengan email dan passwordnya
     public static Response<Void> login(String email, String password) {
         Response<User> userResponse = getUserByEmail(email);
         User user = userResponse.getData();
@@ -67,6 +69,7 @@ public class User {
         return Response.success("Login success", null);
     }
 
+    // mengubah/mengupdate profile masing-masing user
     public Response<Void> changeProfile(String email, String name, String oldPassword, String newPassword) {
         PreparedStatement ps = db.preparedStatement(
                 "UPDATE users "
@@ -87,6 +90,7 @@ public class User {
         }
     }
 
+    //mengambil user berdasarkan email
     public static Response<User> getUserByEmail(String email) {
         PreparedStatement ps = db.preparedStatement("SELECT * FROM users WHERE user_email = ?");
         ResultSet rs;
@@ -118,6 +122,7 @@ public class User {
         }
     }
 
+    //mengambil user berdasarkan namanya
     public static Response<User> getUserByUsername(String name) {
         PreparedStatement ps = db.preparedStatement("SELECT * FROM users WHERE user_name = ?");
         ResultSet rs;
@@ -149,6 +154,7 @@ public class User {
         }
     }
 
+    // validasi untuk register
     public static Response<Void> checkRegisterInput(String email, String name, String password) {
         if (email.isEmpty()) {
             return Response.error("Email must be filled");
@@ -166,6 +172,8 @@ public class User {
         return Response.success("Validation success", null);
     }
 
+    //validasi input untuk change profile
+    //asumsi semua elemen nama, email, password baru harus berbeda dengan yang sebelumnya
     public Response<Void> checkChangeProfileInput(String email, String name, String oldPassword, String newPassword) {
         if (email.isEmpty()) {
             return Response.error("Email must be filled");
@@ -176,6 +184,7 @@ public class User {
         if (newPassword.length() < 5) {
             return Response.error("Password must be at least 5 characters");
         }
+        // jika email dan username ingin tetap bisa sama, bagian ini bisa di comment
         if (email.equals(this.email) || name.equals(this.username)) {
             return Response.error("Email and username must be different from the old one");
         }

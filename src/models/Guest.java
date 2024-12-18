@@ -14,11 +14,13 @@ public class Guest extends User {
     public Guest(String userId, String userEmail, String username, String userPassword) {
         super(userId, userEmail, username, userPassword, "Guest");
     }
-
+    
+    // menerima invitation berdasarkan eventId
     public Response<Void> acceptInvitation(String eventId) {
         return Invitation.acceptInvitation(this.userId, eventId);
     }
 
+    // melihat daftar event yang sudah diaccept oleh user
     public static Response<List<Event>> viewAcceptedEvents(String email) {
         String query = 
             "SELECT e.event_id, e.event_name, e.event_date, e.event_location, e.event_description, e.organizer_id " +
@@ -46,6 +48,7 @@ public class Guest extends User {
                 events.add(new Event(eventId, eventName, eventDate, eventLocation, eventDescription, organizerId));
             }
             
+            // jika tidak ada event yang diaccept user
             if (events.isEmpty()) {
                 return Response.error("No accepted events found for the given email.");
             }
@@ -57,6 +60,7 @@ public class Guest extends User {
         }
     }
 
+    // daftar event invitation yang belum diterima
 	public static Response<List<Event>> viewPendingInvitations(String email) {
 		 String query = 
 			        "SELECT e.event_id, e.event_name, e.event_date, e.event_location, e.event_description, e.organizer_id " +

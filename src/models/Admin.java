@@ -9,15 +9,18 @@ import java.util.List;
 import utils.Response;
 
 public class Admin extends User {
-
+	
+	// mengambil semua events dari database
     public static Response<List<Event>> viewAllEvents() {
         return getAllEvents();
     }
-
+    
+    // mengambil detail informasi dari sebuah event berdasarkan eventIdnya
     public static Response<Event> viewEventDetails(String eventId) {
         return Event.viewEventDetails(eventId);
     }
 
+    // menghapus event berdasarkan eventIdnya
     public static Response<Void> deleteEvent(String eventId) {
         String query = "DELETE FROM events WHERE event_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {
@@ -35,6 +38,7 @@ public class Admin extends User {
         }
     }
 
+    // menghapus user berdasarkan userIdnya
     public static Response<Void> deleteUser(String userId) {
         String query = "DELETE FROM users WHERE user_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {
@@ -52,6 +56,7 @@ public class Admin extends User {
         }
     }
     
+    // mengambil semua pengguna dari database
     public static Response<List<User>> getAllUsers() {
         String query = "SELECT * FROM users";
         List<User> users = new ArrayList<>();
@@ -71,6 +76,7 @@ public class Admin extends User {
         return Response.success("Fetch users success", users);
     }
 
+    // mengambil semua event dari database
     public static Response<List<Event>> getAllEvents() {
         String query = "SELECT * FROM events";
         List<Event> events = new ArrayList<>();
@@ -92,6 +98,7 @@ public class Admin extends User {
         return Response.success("Fetch events success", events);
     }
 
+    // mengambil guest list dari suatu event berdasarkan eventIdnya
     public static Response<List<Guest>> getGuestsByTransactionID(String eventId) {
         String query = "SELECT DISTINCT u.user_id, u.user_email, u.user_name " +
                 "FROM users u JOIN invitations i ON u.user_id = i.user_id " +
@@ -115,6 +122,7 @@ public class Admin extends User {
         return Response.success("Fetch event guests success", guests);
     }
 
+    // mengambil siapa saja vendor (vendor list) dari suatu event berdasarkan eventId nya
     public static Response<List<Vendor>> getVendorsByTransactionID(String eventId) {
         String query = "SELECT DISTINCT u.user_id, u.user_email, u.user_name " +
                 "FROM users u JOIN invitations i ON u.user_id = i.user_id " +

@@ -1,4 +1,4 @@
-package models;
+spackage models;
 
 import utils.Connect;
 import utils.Response;
@@ -27,6 +27,7 @@ public class Invitation {
         this.eventName = eventName;
     }
     
+    // Mengecek apakah undangan sudah diterima oleh user
     public static boolean hasAccepted(String userId, String eventId) {
         String query = String.format(
             "SELECT invitation_status FROM invitations WHERE user_id = '%s' AND event_id = '%s'",
@@ -45,6 +46,7 @@ public class Invitation {
         return false; 
     }
 
+    // method untuk membuat invitation baru
     public static Response<Void> sendInvitation(String email, String eventId) {
         String invitationId = getNextIncrementalId();
 
@@ -68,6 +70,7 @@ public class Invitation {
         return Response.success("Invitation sent successfully.", null);
     }
 
+    // method untuk menerima suatu invitation
     public static Response<Void> acceptInvitation(String userId, String eventId) {
         String query = String.format(
                 "UPDATE invitations SET invitation_status = 1 WHERE user_id = '%s' AND event_id = '%s'", 
@@ -85,6 +88,7 @@ public class Invitation {
         return Response.success("Invitation accepted.", null);
     }
 
+    // Mendapatkan daftar undangan yang belum diterima berdasarkan email pengguna
     public static Response<List<Invitation>> getInvitations(String email) {
         String query = String.format(
                 "SELECT i.invitation_id, i.event_id, i.user_id, i.invitation_role, e.event_name " +
@@ -119,10 +123,12 @@ public class Invitation {
         }
     }
 
+    // membuat ID untuk invitation
     private static String getNextIncrementalId() {
         String query = "SELECT invitation_id FROM invitations ORDER BY invitation_id DESC LIMIT 1";
         ResultSet rs = db.execQuery(query);
 
+        // format "IN001" -> Membuat ID event baru dengan format "IN" diikuti dengan 3 digit angka yang increment.
         try {
             if (rs.next()) {
                 String largestId = rs.getString("invitation_id");
@@ -164,8 +170,7 @@ public class Invitation {
 	public void setEventName(String eventName) {
 		this.eventName = eventName;
 	}
-    
-    
+
     public static Response<List<User>> getEventGuests(String eventId) {
         String query = String.format(
                 "SELECT u.user_id, u.user_email, u.user_name, u.user_role " +

@@ -15,10 +15,12 @@ public class EventOrganizer extends User {
         super(userId, userEmail, userName, userPassword, userRole);
     }
     
+    // membuat event baru
     public static Response<Void> createEvent(String eventName, String eventDate, String eventLocation, String eventDescription, String organizerId) {
 		return Event.createEvent(eventName, eventDate, eventLocation, eventDescription, organizerId);
 	} 
 
+    // melihat semua event yang dibuat (berdasarkan userId nya)
     public static Response<List<Event>> viewOrganizedEvents(String userId) {
         String query = "SELECT * FROM events WHERE organizer_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {
@@ -44,6 +46,7 @@ public class EventOrganizer extends User {
         }
     }
 
+    // melihat detail event
     public static Response<Event> viewOrganizedEventDetails(String eventId) {
         String query = "SELECT * FROM events WHERE event_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {
@@ -115,6 +118,7 @@ public class EventOrganizer extends User {
         }
     }
     
+    // mendapatkan guest yang belum terdaftar/diinvite pada suatu event
     public static Response<List<User>> getGuests(String eventId) {
         String query = "SELECT u.user_id, u.user_email, u.user_name " +
                        "FROM users u " +
@@ -144,6 +148,7 @@ public class EventOrganizer extends User {
         }
     }
 
+    // mendapatkan vendor yang belum terdaftar/diinvite pada suatu event
     public static Response<List<User>> getVendors(String eventId) {
         String query = "SELECT u.user_id, u.user_email, u.user_name " +
                        "FROM users u " +
@@ -174,7 +179,7 @@ public class EventOrganizer extends User {
     }
 
     
-
+    // validasi input saat membuat event
     public static Response<Void> checkCreateEventInput(String eventName, LocalDate eventDate, String eventLocation, String eventDescription) {
         if (eventName.isEmpty()) {
             return Response.error("Event name must be filled");
@@ -215,6 +220,7 @@ public class EventOrganizer extends User {
 		return Response.success("", null);
 	}
 	
+	// edit nama event
     public static Response<Void> editEventName(String eventId, String eventName) {
         String query = "UPDATE events SET event_name = ? WHERE event_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {

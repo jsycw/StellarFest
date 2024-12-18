@@ -16,6 +16,7 @@ public class Vendor extends User {
         super(userId, userEmail, username, userPassword, "Vendor");
     }
 
+    // mengubah status invitation menjadi 1 yang artinya accept
     public Response<Void> acceptInvitation(String eventId) {
         String query = "UPDATE invitations SET invitation_status = 1 WHERE user_id = ? AND event_id = ?";
         try (PreparedStatement ps = db.preparedStatement(query)) {
@@ -32,6 +33,7 @@ public class Vendor extends User {
         return Response.error("Failed to accept invitation. No matching record found.");
     }
 
+    // melihat daftar acara yang telah diterima oleh vendor berdasarkan email.
     public static Response<List<Event>> viewAcceptedEvents(String email) {
         String query = "SELECT e.event_id, e.event_name, e.event_date, e.event_location, e.event_description, e.organizer_id " +
                 "FROM events e JOIN invitations i ON e.event_id = i.event_id " +
@@ -61,6 +63,9 @@ public class Vendor extends User {
         return Response.success("Fetched accepted events successfully", events);
     }
 
+	 // Metode untuk mengelola data vendor (nama produk dan deskripsi) dalam tabel `vendors`.
+	 // Jika vendor sudah ada, data akan bisa diperbarui. Jika tidak, data baru akan ditambahkan.
+    // asumsi 1 vendor memiliki 1 product
     public static Response<Void> manageVendor(String vendorId, String description, String product) {
         PreparedStatement ps = db.preparedStatement(
             "INSERT INTO vendors (vendor_id, product_name, product_description) "
@@ -82,7 +87,8 @@ public class Vendor extends User {
             return Response.error("Manage vendor failed: " + e.getMessage());
         }
     }
-
+    
+    // mengambil data produk vendor berdasarkan vendorId.
     public static Response<VendorProduct> getProduct(String vendorId) {
         ResultSet rs = db.execQuery(
             String.format(
@@ -107,6 +113,7 @@ public class Vendor extends User {
         }
     }
 
+    // validasi input untuk data nama dan deskripsi product
     public static Response<Void> checkManageVendorInput(String description, String product) {
         if (description.isEmpty()) {
             return Response.error("Product description must be filled");

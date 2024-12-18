@@ -17,6 +17,7 @@ public class Event {
     
     private static Connect db = Connect.getInstance();
     
+    //constructor
     public Event(String eventId, String eventName, String eventDate, String eventLocation, String eventDescription,
             String organizerId) {
         this.eventId = eventId;
@@ -27,6 +28,7 @@ public class Event {
         this.organizerId = organizerId;
     }
 
+    // membuat event baru
     public static Response<Void> createEvent(String eventName, String date, String location, String description, String organizerId) {
         String eventId = getNextIncrementalId();
         
@@ -57,6 +59,7 @@ public class Event {
         }
     }
 
+    //mengambil detail event berdasarkan eventId nya
     public static Response<Event> viewEventDetails(String eventId) {
         String query = "SELECT * FROM events WHERE event_id = ?";
         
@@ -83,15 +86,17 @@ public class Event {
     }
 
     private static String getNextIncrementalId() {
+    	// method untuk membuat eventId 
         String query = "SELECT event_id FROM events ORDER BY event_id DESC LIMIT 1";
         
+        // format "EV001" -> Membuat ID event baru dengan format "EV" diikuti dengan 3 digit angka yang increment.
         try (ResultSet rs = db.execQuery(query)) {
             if (rs.next()) {
                 String largestId = rs.getString("event_id");
                 int nextIdNumber = Integer.parseInt(largestId.substring(2)) + 1;
                 return String.format("EV%03d", nextIdNumber);
             } else {
-                return "EV001";
+                return "EV001"; // ID pertama jika belum ada event
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -99,6 +104,7 @@ public class Event {
         }
     }
     
+    // getter untuk atribut-atribut Event
     public String getEventId() {
         return eventId;
     }
