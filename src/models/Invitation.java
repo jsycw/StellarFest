@@ -1,4 +1,4 @@
-spackage models;
+package models;
 
 import utils.Connect;
 import utils.Response;
